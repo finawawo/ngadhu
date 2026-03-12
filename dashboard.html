@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — NGADHU Kabupaten Ngada</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+  :root {
+    --red: #C0392B; --red-d: #96281B; --red-l: #E74C3C;
+    --gold: #D4A843; --gold-l: #F0C060;
+    --dark: #0D1117; --dark2: #161B22; --dark3: #21262D;
+    --gray: #8B949E; --light: #F0F6FF; --white: #FFFFFF;
+    --green: #3fb950; --blue: #58a6ff; --orange: #f0883e;
+    --sidebar-w: 250px;
+    --font: 'DM Sans', sans-serif;
+    --mono: 'DM Mono', monospace;
+    --display: 'Playfair Display', serif;
+  }
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: var(--font); background: var(--dark); color: var(--white); display: flex; min-height: 100vh; }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--dark2);
+    border-right: 1px solid rgba(255,255,255,0.06);
+    display: flex; flex-direction: column;
+    position: fixed; top: 0; left: 0; bottom: 0;
+    z-index: 100;
+    transition: transform 0.3s;
+  }
+
+  .sidebar-header {
+    padding: 1.5rem 1.2rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .sidebar-logo {
+    width: 34px; height: 34px;
+    background: linear-gradient(135deg, var(--red), var(--gold));
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--display);
+    font-weight: 900; font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .sidebar-title { font-family: var(--display); font-size: 1.1rem; font-weight: 700; }
+  .sidebar-title span { color: var(--gold); }
+
+  .sidebar-nav { flex: 1; padding: 1rem 0.7rem; overflow-y: auto; }
+
+  .nav-section-label {
+    font-size: 0.65rem;
+    color: var(--gray);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.8rem 0.5rem 0.4rem;
+    font-weight: 600;
+  }
+
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 0.6rem 0.8rem;
+    border-radius: 8px;
+    color: var(--gray);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    cursor: pointer;
+    margin-bottom: 2px;
+    border: 1px solid transparent;
+  }
+
+  .nav-item:hover { color: white; background: rgba(255,255,255,0.05); }
+  .nav-item.active {
+    color: white;
+    background: rgba(192,57,43,0.15);
+    border-color: rgba(192,57,43,0.25);
+  }
+
+  .nav-item .icon { width: 18px; text-align: center; font-size: 1rem; flex-shrink: 0; }
+  .nav-item .badge {
+    margin-left: auto;
+    background: var(--red);
+    color: white;
+    font-size: 0.65rem;
+    padding: 1px 6px;
+    border-radius: 100px;
+    font-family: var(--mono);
+  }
+
+  .sidebar-user {
+    padding: 1rem 1.2rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .user-avatar {
+    width: 34px; height: 34px;
+    background: linear-gradient(135deg, var(--red), var(--gold));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.8rem;
+    flex-shrink: 0;
+  }
+
+  .user-info { flex: 1; min-width: 0; }
+  .user-name { font-size: 0.83rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .user-role { font-size: 0.7rem; color: var(--gray); }
+
+  /* MAIN */
+  .main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    display: flex; flex-direction: column;
+    min-height: 100vh;
+  }
+
+  /* TOPBAR */
+  .topbar {
+    height: 60px;
+    background: var(--dark2);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 1.5rem;
+    position: sticky; top: 0; z-index: 50;
+  }
+
+  .topbar-left { display: flex; align-items: center; gap: 1rem; }
+  .page-title { font-size: 1rem; font-weight: 600; }
+  .breadcrumb { font-size: 0.75rem; color: var(--gray); display: flex; gap: 6px; align-items: center; }
+  .breadcrumb span { color: var(--gray); }
+  .breadcrumb .current { color: var(--red-l); }
+
+  .topbar-right { display: flex; align-items: center; gap: 0.8rem; }
+
+  .topbar-btn {
+    background: var(--dark3);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: var(--gray);
+    padding: 0.45rem 0.9rem;
+    border-radius: 7px;
+    font-family: var(--font);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  .topbar-btn:hover { color: white; border-color: rgba(255,255,255,0.2); }
+  .topbar-btn.primary { background: var(--red); color: white; border-color: var(--red); }
+  .topbar-btn.primary:hover { background: var(--red-d); }
+
+  .notif-btn {
+    width: 36px; height: 36px;
+    background: var(--dark3);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s;
+    color: var(--gray);
+  }
+
+  .notif-btn:hover { color: white; }
+  .notif-dot {
+    position: absolute; top: 6px; right: 6px;
+    width: 7px; height: 7px;
+    background: var(--red);
+    border-radius: 50%;
+    border: 1.5px solid var(--dark2);
+  }
+
+  /* CONTENT */
+  .content { padding: 1.5rem; flex: 1; }
+
+  /* ROLE SWITCHER */
+  .role-switcher {
+    display: flex; gap: 0.5rem;
+    background: var(--dark3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 0.5rem;
+    margin-bottom: 1.5rem;
+    width: fit-content;
+  }
+
+  .role-btn {
+    padding: 0.4rem 1rem;
+    border-radius: 7px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--gray);
+    font-family: var(--font);
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  .role-btn.active { background: var(--red); color: white; }
+
+  /* SUMMARY CARDS */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .summary-card {
+    background: var(--dark3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 1.2rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s;
+  }
+
+  .summary-card:hover { border-color: rgba(192,57,43,0.25); }
+
+  .summary-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0; height: 2px;
+  }
+
+  .summary-card.c1::after { background: linear-gradient(90deg, var(--red), var(--gold)); }
+  .summary-card.c2::after { background: linear-gradient(90deg, var(--blue), #3fb9d4); }
+  .summary-card.c3::after { background: linear-gradient(90deg, var(--green), #56d364); }
+  .summary-card.c4::after { background: linear-gradient(90deg, var(--orange), #f0c040); }
+
+  .sc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
+  .sc-icon {
+    width: 40px; height: 40px;
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+  }
+
+  .c1 .sc-icon { background: rgba(192,57,43,0.15); }
+  .c2 .sc-icon { background: rgba(88,166,255,0.12); }
+  .c3 .sc-icon { background: rgba(63,185,80,0.12); }
+  .c4 .sc-icon { background: rgba(240,136,62,0.12); }
+
+  .sc-trend {
+    font-size: 0.72rem;
+    font-family: var(--mono);
+    padding: 3px 7px;
+    border-radius: 100px;
+  }
+
+  .sc-trend.up { background: rgba(63,185,80,0.15); color: var(--green); }
+  .sc-trend.down { background: rgba(192,57,43,0.15); color: var(--red-l); }
+
+  .sc-value {
+    font-family: var(--display);
+    font-size: 1.9rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+
+  .sc-label { font-size: 0.78rem; color: var(--gray); }
+
+  /* CHARTS ROW */
+  .charts-row {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .chart-card {
+    background: var(--dark3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 1.2rem;
+  }
+
+  .card-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 1.2rem;
+  }
+
+  .card-title { font-size: 0.88rem; font-weight: 600; }
+  .card-subtitle { font-size: 0.74rem; color: var(--gray); margin-top: 2px; }
+
+  .card-actions { display: flex; gap: 0.4rem; }
+
+  .card-btn {
+    background: var(--dark2);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: var(--gray);
+    padding: 0.3rem 0.7rem;
+    border-radius: 5px;
+    font-size: 0.72rem;
+    cursor: pointer;
+    font-family: var(--font);
+    transition: all 0.2s;
+  }
+
+  .card-btn:hover, .card-btn.active { color: white; border-color: rgba(192,57,43,0.4); }
+
+  .chart-container { position: relative; }
+
+  /* TABLE */
+  .table-section { margin-bottom: 1.5rem; }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+
+  .data-table th {
+    text-align: left;
+    padding: 0.7rem 1rem;
+    background: rgba(255,255,255,0.03);
+    color: var(--gray);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .data-table td {
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: middle;
+  }
+
+  .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .status-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 8px;
+    border-radius: 100px;
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+
+  .status-badge::before {
+    content: '';
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .status-published { background: rgba(63,185,80,0.12); color: var(--green); }
+  .status-pending { background: rgba(240,136,62,0.15); color: var(--orange); }
+  .status-draft { background: rgba(139,148,158,0.15); color: var(--gray); }
+  .status-rejected { background: rgba(192,57,43,0.15); color: var(--red-l); }
+
+  /* GRID ROW 2 */
+  .mid-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  /* ACTIVITY */
+  .activity-list { display: flex; flex-direction: column; gap: 0.7rem; }
+
+  .activity-item {
+    display: flex; gap: 0.8rem; align-items: flex-start;
+    padding: 0.7rem;
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+
+  .activity-item:hover { background: rgba(255,255,255,0.03); }
+
+  .activity-avatar {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .av1 { background: rgba(192,57,43,0.3); color: var(--red-l); }
+  .av2 { background: rgba(88,166,255,0.2); color: var(--blue); }
+  .av3 { background: rgba(63,185,80,0.2); color: var(--green); }
+  .av4 { background: rgba(212,168,67,0.2); color: var(--gold); }
+
+  .activity-text { flex: 1; }
+  .activity-text strong { font-weight: 600; font-size: 0.82rem; }
+  .activity-text p { font-size: 0.78rem; color: var(--gray); margin-top: 1px; }
+  .activity-time { font-size: 0.7rem; color: var(--gray); font-family: var(--mono); white-space: nowrap; }
+
+  /* OPD STATUS */
+  .opd-list { display: flex; flex-direction: column; gap: 0.6rem; }
+
+  .opd-item {
+    display: flex; align-items: center; gap: 0.8rem;
+    padding: 0.6rem 0.8rem;
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+
+  .opd-item:hover { background: rgba(255,255,255,0.03); }
+
+  .opd-rank {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--gray);
+    width: 20px;
+    text-align: right;
+  }
+
+  .opd-name { flex: 1; font-size: 0.82rem; font-weight: 500; }
+  .opd-count { font-family: var(--mono); font-size: 0.75rem; color: var(--gray); margin-right: 0.5rem; }
+
+  .progress-bar {
+    width: 80px; height: 4px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--red), var(--gold));
+  }
+
+  /* USER MGMT SECTION */
+  .user-mgmt {
+    background: var(--dark3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 1.2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .user-table-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 1.2rem;
+  }
+
+  .search-input {
+    background: var(--dark2);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: white;
+    padding: 0.45rem 0.9rem;
+    border-radius: 7px;
+    font-family: var(--font);
+    font-size: 0.8rem;
+    outline: none;
+    width: 220px;
+    transition: border-color 0.2s;
+  }
+
+  .search-input:focus { border-color: rgba(192,57,43,0.5); }
+  .search-input::placeholder { color: var(--gray); }
+
+  /* ALERT BOX */
+  .alert-box {
+    background: rgba(192,57,43,0.08);
+    border: 1px solid rgba(192,57,43,0.2);
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 1rem;
+  }
+
+  .alert-icon { font-size: 1.2rem; flex-shrink: 0; }
+  .alert-text { font-size: 0.83rem; }
+  .alert-text strong { color: var(--red-l); }
+  .alert-text p { color: var(--gray); font-size: 0.78rem; margin-top: 2px; }
+
+  /* RESPONSIVE */
+  @media (max-width: 1024px) {
+    .summary-grid { grid-template-columns: repeat(2, 1fr); }
+    .charts-row { grid-template-columns: 1fr; }
+    .mid-row { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; }
+  }
+
+  /* DASHBOARD ANIMATIONS */
+  .summary-card, .kpi-card { opacity:0; transform:translateY(18px); animation: card-in .45s cubic-bezier(.22,1,.36,1) both; }
+  .summary-card:nth-child(1),.kpi-card:nth-child(1){animation-delay:.1s}
+  .summary-card:nth-child(2),.kpi-card:nth-child(2){animation-delay:.18s}
+  .summary-card:nth-child(3),.kpi-card:nth-child(3){animation-delay:.26s}
+  .summary-card:nth-child(4),.kpi-card:nth-child(4){animation-delay:.34s}
+  @keyframes card-in{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
+
+  .chart-card,.table-card,.activity-card { opacity:0; transform:translateY(20px); animation:card-in .5s ease both; }
+  .chart-card:nth-child(1){animation-delay:.4s}
+  .chart-card:nth-child(2){animation-delay:.5s}
+  .table-card{animation-delay:.45s}
+  .activity-card{animation-delay:.55s}
+
+  /* Sidebar items */
+  .nav-item { transition:background .18s,color .18s,transform .18s,border .18s; }
+  .nav-item:hover { transform:translateX(3px); }
+  .nav-item.active { position:relative; }
+  .nav-item.active::before { content:''; position:absolute; left:0; top:50%; transform:translateY(-50%); width:3px; height:60%; background:#C0392B; border-radius:2px; }
+
+  /* Status badge pulse */
+  .status-pending { animation: status-pulse 2s ease-in-out infinite; }
+  @keyframes status-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(240,136,62,.4)} 50%{box-shadow:0 0 0 5px rgba(240,136,62,0)} }
+
+  /* Table row hover */
+  .data-table tbody tr { transition: background .15s; }
+  .data-table tbody tr:hover { background:rgba(255,255,255,.03) !important; }
+
+  /* Alert slide in */
+  .alert-bar, .alert-box { animation: alert-in .5s cubic-bezier(.22,1,.36,1) both .6s; opacity:0; }
+  @keyframes alert-in { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:none} }
+
+  /* Topbar */
+  .topbar { animation: topbar-in .4s ease both; }
+  @keyframes topbar-in { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:none} }
+
+  /* Sidebar */
+  .sidebar { animation: sidebar-in .5s cubic-bezier(.22,1,.36,1) both; }
+  @keyframes sidebar-in { from{opacity:0;transform:translateX(-20px)} to{opacity:1;transform:none} }
+
+  /* OPD progress bars */
+  .progress-bar .progress-fill { transition: width 1.2s cubic-bezier(.4,0,.2,1); }
+
+  /* Summary number counter */
+  .summary-value, .kpi-value { transition: color .3s; }
+
+  /* Notification bell wiggle */
+  .notif-btn:hover svg, .bell-icon:hover { animation: bell-ring .4s ease; }
+  @keyframes bell-ring { 0%,100%{transform:rotate(0)} 25%{transform:rotate(12deg)} 75%{transform:rotate(-12deg)} }
+
+  /* Button hover */
+  .btn-add, .btn-primary-dash { transition: transform .15s, box-shadow .2s; position:relative; overflow:hidden; }
+  .btn-add:hover, .btn-primary-dash:hover { transform:translateY(-1px); box-shadow:0 5px 18px rgba(192,57,43,.35); }
+
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">N</div>
+    <div class="sidebar-title">NGADHU<span>.</span></div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Utama</div>
+    <a class="nav-item active" href="#">
+      <span class="icon">📊</span> Dashboard
+    </a>
+    <a class="nav-item" href="#">
+      <span class="icon">🗄️</span> Dataset
+      <span class="badge">247</span>
+    </a>
+    <a class="nav-item" href="#">
+      <span class="icon">📈</span> Analitik
+    </a>
+    <a class="nav-item" href="#">
+      <span class="icon">🗺️</span> Peta SPM
+    </a>
+
+    <div class="nav-section-label">Manajemen</div>
+    <a class="nav-item" href="#">
+      <span class="icon">👥</span> Pengguna
+    </a>
+    <a class="nav-item" href="#">
+      <span class="icon">🏢</span> Organisasi
+    </a>
+    <a class="nav-item" href="#">
+      <span class="icon">🏷️</span> Urusan & Kategori
+    </a>
+
+    <div class="nav-section-label">Publikasi</div>
+    <a class="nav-item" href="#">
+      <span class="icon">📰</span> Berita
+      <span class="badge">3</span>
+    </a>
+    <a class="nav-item" href="#">
+      <span class="icon">📋</span> Metadata
+    </a>
+    <a class="nav-item" href="#">
+      <span class="icon">⚖️</span> Produk Hukum
+    </a>
+
+    <div class="nav-section-label">Sistem</div>
+    <a class="nav-item" href="#">
+      <span class="icon">⚙️</span> Pengaturan
+    </a>
+    <a class="nav-item" href="#">
+      <span class="icon">📝</span> Log Aktivitas
+    </a>
+    <a class="nav-item" href="index.html">
+      <span class="icon">🌐</span> Lihat Portal
+    </a>
+  </nav>
+
+  <div class="sidebar-user">
+    <div class="user-avatar">SA</div>
+    <div class="user-info">
+      <div class="user-name">Super Admin</div>
+      <div class="user-role">Administrator</div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div>
+        <div class="page-title">Dashboard</div>
+        <div class="breadcrumb">
+          <span>NGADHU</span>
+          <span>›</span>
+          <span class="current">Dashboard</span>
+        </div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="role-switcher">
+        <button class="role-btn active" onclick="switchRole(this, 'admin')">🛡️ Admin</button>
+        <button class="role-btn" onclick="switchRole(this, 'operator')">✏️ Operator OPD</button>
+        <button class="role-btn" onclick="switchRole(this, 'publik')">👁️ Publik</button>
+      </div>
+      <button class="topbar-btn primary">+ Tambah Dataset</button>
+      <div class="notif-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <div class="notif-dot"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ALERT -->
+    <div class="alert-box">
+      <div class="alert-icon">🔔</div>
+      <div class="alert-text">
+        <strong>3 dataset menunggu persetujuan</strong>
+        <p>Dataset dari Dinas Kesehatan, Dinas Pendidikan, dan BPS perlu diverifikasi sebelum dipublikasikan.</p>
+      </div>
+      <button class="topbar-btn" style="white-space:nowrap">Tinjau Sekarang →</button>
+    </div>
+
+    <!-- SUMMARY CARDS -->
+    <div class="summary-grid">
+      <div class="summary-card c1">
+        <div class="sc-header">
+          <div class="sc-icon">🗄️</div>
+          <span class="sc-trend up">↑ 12%</span>
+        </div>
+        <div class="sc-value">247</div>
+        <div class="sc-label">Total Dataset Aktif</div>
+      </div>
+      <div class="summary-card c2">
+        <div class="sc-header">
+          <div class="sc-icon">🏢</div>
+          <span class="sc-trend up">↑ 2</span>
+        </div>
+        <div class="sc-value">28</div>
+        <div class="sc-label">Organisasi / OPD</div>
+      </div>
+      <div class="summary-card c3">
+        <div class="sc-header">
+          <div class="sc-icon">📥</div>
+          <span class="sc-trend up">↑ 34%</span>
+        </div>
+        <div class="sc-value">4.821</div>
+        <div class="sc-label">Total Unduhan Bulan Ini</div>
+      </div>
+      <div class="summary-card c4">
+        <div class="sc-header">
+          <div class="sc-icon">👥</div>
+          <span class="sc-trend up">↑ 8%</span>
+        </div>
+        <div class="sc-value">1.247</div>
+        <div class="sc-label">Pengunjung Hari Ini</div>
+      </div>
+    </div>
+
+    <!-- CHARTS ROW -->
+    <div class="charts-row">
+      <div class="chart-card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Tren Dataset & Unduhan</div>
+            <div class="card-subtitle">6 bulan terakhir</div>
+          </div>
+          <div class="card-actions">
+            <button class="card-btn active">6 Bulan</button>
+            <button class="card-btn">1 Tahun</button>
+          </div>
+        </div>
+        <div class="chart-container" style="height:220px">
+          <canvas id="trendChart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Dataset per Sektor</div>
+            <div class="card-subtitle">Distribusi sektoral</div>
+          </div>
+        </div>
+        <div class="chart-container" style="height:220px">
+          <canvas id="sektorChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABLE: DATASET TERBARU -->
+    <div class="chart-card table-section">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Dataset Terbaru</div>
+          <div class="card-subtitle">Menunggu review & yang baru dipublikasikan</div>
+        </div>
+        <div class="card-actions">
+          <button class="card-btn active">Semua</button>
+          <button class="card-btn">Pending</button>
+          <button class="card-btn">Published</button>
+          <button class="topbar-btn primary" style="font-size:0.75rem; padding:0.3rem 0.8rem">Export CSV</button>
+        </div>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Judul Dataset</th>
+            <th>OPD</th>
+            <th>Kategori</th>
+            <th>Tanggal Upload</th>
+            <th>Status</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Angka Stunting per Desa Kab. Ngada 2024</td>
+            <td style="color:var(--gray); font-size:0.78rem">Dinkes Ngada</td>
+            <td><span class="tag tag-health">Kesehatan</span></td>
+            <td style="font-family:var(--mono); font-size:0.75rem; color:var(--gray)">12 Mar 2025</td>
+            <td><span class="status-badge status-pending">Menunggu</span></td>
+            <td>
+              <button class="card-btn" style="color:var(--green); border-color:rgba(63,185,80,0.3)">✓ Setujui</button>
+              <button class="card-btn" style="color:var(--red-l); border-color:rgba(192,57,43,0.3)">✗ Tolak</button>
+            </td>
+          </tr>
+          <tr>
+            <td>APM SD/SMP/SMA Kecamatan Bajawa 2024</td>
+            <td style="color:var(--gray); font-size:0.78rem">Dinas Pendidikan</td>
+            <td>Pendidikan</td>
+            <td style="font-family:var(--mono); font-size:0.75rem; color:var(--gray)">10 Mar 2025</td>
+            <td><span class="status-badge status-pending">Menunggu</span></td>
+            <td>
+              <button class="card-btn" style="color:var(--green); border-color:rgba(63,185,80,0.3)">✓ Setujui</button>
+              <button class="card-btn" style="color:var(--red-l); border-color:rgba(192,57,43,0.3)">✗ Tolak</button>
+            </td>
+          </tr>
+          <tr>
+            <td>PDRB Kab. Ngada ADHB 2024</td>
+            <td style="color:var(--gray); font-size:0.78rem">BPS Kab. Ngada</td>
+            <td>Ekonomi</td>
+            <td style="font-family:var(--mono); font-size:0.75rem; color:var(--gray)">08 Mar 2025</td>
+            <td><span class="status-badge status-published">Dipublikasi</span></td>
+            <td>
+              <button class="card-btn">✏️ Edit</button>
+              <button class="card-btn">🔗 Lihat</button>
+            </td>
+          </tr>
+          <tr>
+            <td>Data Jalan Kabupaten Kondisi 2024</td>
+            <td style="color:var(--gray); font-size:0.78rem">Dinas PUPR</td>
+            <td>Infrastruktur</td>
+            <td style="font-family:var(--mono); font-size:0.75rem; color:var(--gray)">05 Mar 2025</td>
+            <td><span class="status-badge status-published">Dipublikasi</span></td>
+            <td>
+              <button class="card-btn">✏️ Edit</button>
+              <button class="card-btn">🔗 Lihat</button>
+            </td>
+          </tr>
+          <tr>
+            <td>Data Penerima PKH Kec. Golewa 2024</td>
+            <td style="color:var(--gray); font-size:0.78rem">Dinas Sosial</td>
+            <td>Sosial</td>
+            <td style="font-family:var(--mono); font-size:0.75rem; color:var(--gray)">01 Mar 2025</td>
+            <td><span class="status-badge status-draft">Draft</span></td>
+            <td>
+              <button class="card-btn">✏️ Edit</button>
+              <button class="card-btn" style="color:var(--red-l)">🗑️ Hapus</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- MID ROW -->
+    <div class="mid-row">
+      <!-- ACTIVITY -->
+      <div class="chart-card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Aktivitas Terbaru</div>
+            <div class="card-subtitle">Log aktivitas sistem</div>
+          </div>
+        </div>
+        <div class="activity-list">
+          <div class="activity-item">
+            <div class="activity-avatar av1">DS</div>
+            <div class="activity-text">
+              <strong>Dina Sari</strong> (Dinkes)
+              <p>Mengupload dataset "Imunisasi Balita 2024"</p>
+            </div>
+            <div class="activity-time">2 mnt lalu</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-avatar av2">MR</div>
+            <div class="activity-text">
+              <strong>M. Ridwan</strong> (Admin)
+              <p>Menyetujui dataset PDRB dari BPS</p>
+            </div>
+            <div class="activity-time">15 mnt lalu</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-avatar av3">YF</div>
+            <div class="activity-text">
+              <strong>Yohana F.</strong> (Disdik)
+              <p>Memperbarui metadata APM SMA 2024</p>
+            </div>
+            <div class="activity-time">1 jam lalu</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-avatar av4">BK</div>
+            <div class="activity-text">
+              <strong>Budi K.</strong> (PUPR)
+              <p>Mengunggah shapefile jaringan jalan</p>
+            </div>
+            <div class="activity-time">3 jam lalu</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-avatar av1">SA</div>
+            <div class="activity-text">
+              <strong>Super Admin</strong>
+              <p>Menambahkan akun operator baru: Dinas Pariwisata</p>
+            </div>
+            <div class="activity-time">5 jam lalu</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOP OPD -->
+      <div class="chart-card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Top OPD Kontributor</div>
+            <div class="card-subtitle">Berdasarkan jumlah dataset</div>
+          </div>
+        </div>
+        <div class="opd-list">
+          <div class="opd-item">
+            <div class="opd-rank">1</div>
+            <div class="opd-name">BPS Kab. Ngada</div>
+            <div class="opd-count">42 set</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+          </div>
+          <div class="opd-item">
+            <div class="opd-rank">2</div>
+            <div class="opd-name">Dinas Kesehatan</div>
+            <div class="opd-count">38 set</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:90%"></div></div>
+          </div>
+          <div class="opd-item">
+            <div class="opd-rank">3</div>
+            <div class="opd-name">Dinas Pendidikan</div>
+            <div class="opd-count">31 set</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:74%"></div></div>
+          </div>
+          <div class="opd-item">
+            <div class="opd-rank">4</div>
+            <div class="opd-name">Dinas Pertanian</div>
+            <div class="opd-count">27 set</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:64%"></div></div>
+          </div>
+          <div class="opd-item">
+            <div class="opd-rank">5</div>
+            <div class="opd-name">Dinas PUPR</div>
+            <div class="opd-count">21 set</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:50%"></div></div>
+          </div>
+          <div class="opd-item">
+            <div class="opd-rank">6</div>
+            <div class="opd-name">Bappeda Ngada</div>
+            <div class="opd-count">18 set</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:43%"></div></div>
+          </div>
+          <div class="opd-item">
+            <div class="opd-rank">7</div>
+            <div class="opd-name">Dinas Sosial</div>
+            <div class="opd-count">15 set</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:36%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- USER MANAGEMENT -->
+    <div class="user-mgmt">
+      <div class="user-table-header">
+        <div>
+          <div class="card-title">Manajemen Pengguna</div>
+          <div class="card-subtitle" style="margin-top:2px">Kelola akses user dan peran sistem</div>
+        </div>
+        <div style="display:flex; gap:0.5rem; align-items:center;">
+          <input type="text" class="search-input" placeholder="🔍 Cari pengguna...">
+          <button class="topbar-btn primary">+ Tambah User</button>
+        </div>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Nama Pengguna</th>
+            <th>Email</th>
+            <th>Organisasi</th>
+            <th>Peran</th>
+            <th>Status</th>
+            <th>Terakhir Login</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="display:flex; align-items:center; gap:8px;">
+              <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--red),var(--gold));display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0">SA</div>
+              Super Admin
+            </td>
+            <td style="color:var(--gray); font-size:0.78rem">admin@ngadakab.go.id</td>
+            <td style="font-size:0.78rem">Kominfo Ngada</td>
+            <td><span class="status-badge" style="background:rgba(212,168,67,0.15);color:var(--gold)">Super Admin</span></td>
+            <td><span class="status-badge status-published">Aktif</span></td>
+            <td style="font-family:var(--mono); font-size:0.73rem; color:var(--gray)">Hari ini</td>
+            <td><button class="card-btn">Edit</button></td>
+          </tr>
+          <tr>
+            <td style="display:flex; align-items:center; gap:8px;">
+              <div style="width:28px;height:28px;border-radius:50%;background:rgba(88,166,255,0.2);display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0;color:var(--blue)">DS</div>
+              Dina Sari
+            </td>
+            <td style="color:var(--gray); font-size:0.78rem">dina.sari@ngada.go.id</td>
+            <td style="font-size:0.78rem">Dinas Kesehatan</td>
+            <td><span class="status-badge" style="background:rgba(88,166,255,0.12);color:var(--blue)">Operator OPD</span></td>
+            <td><span class="status-badge status-published">Aktif</span></td>
+            <td style="font-family:var(--mono); font-size:0.73rem; color:var(--gray)">2 jam lalu</td>
+            <td><button class="card-btn">Edit</button> <button class="card-btn" style="color:var(--red-l)">Suspend</button></td>
+          </tr>
+          <tr>
+            <td style="display:flex; align-items:center; gap:8px;">
+              <div style="width:28px;height:28px;border-radius:50%;background:rgba(63,185,80,0.2);display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0;color:var(--green)">YF</div>
+              Yohana Funan
+            </td>
+            <td style="color:var(--gray); font-size:0.78rem">yohana.f@ngada.go.id</td>
+            <td style="font-size:0.78rem">Dinas Pendidikan</td>
+            <td><span class="status-badge" style="background:rgba(88,166,255,0.12);color:var(--blue)">Operator OPD</span></td>
+            <td><span class="status-badge status-published">Aktif</span></td>
+            <td style="font-family:var(--mono); font-size:0.73rem; color:var(--gray)">1 jam lalu</td>
+            <td><button class="card-btn">Edit</button> <button class="card-btn" style="color:var(--red-l)">Suspend</button></td>
+          </tr>
+          <tr>
+            <td style="display:flex; align-items:center; gap:8px;">
+              <div style="width:28px;height:28px;border-radius:50%;background:rgba(240,136,62,0.2);display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0;color:var(--orange)">MR</div>
+              M. Ridwan
+            </td>
+            <td style="color:var(--gray); font-size:0.78rem">ridwan@ngada.go.id</td>
+            <td style="font-size:0.78rem">Kominfo Ngada</td>
+            <td><span class="status-badge" style="background:rgba(192,57,43,0.12);color:var(--red-l)">Admin OPD</span></td>
+            <td><span class="status-badge status-published">Aktif</span></td>
+            <td style="font-family:var(--mono); font-size:0.73rem; color:var(--gray)">15 mnt lalu</td>
+            <td><button class="card-btn">Edit</button></td>
+          </tr>
+          <tr>
+            <td style="display:flex; align-items:center; gap:8px;">
+              <div style="width:28px;height:28px;border-radius:50%;background:rgba(139,148,158,0.2);display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0">BK</div>
+              Budi Kurniawan
+            </td>
+            <td style="color:var(--gray); font-size:0.78rem">budi.k@ngada.go.id</td>
+            <td style="font-size:0.78rem">Dinas PUPR</td>
+            <td><span class="status-badge" style="background:rgba(88,166,255,0.12);color:var(--blue)">Operator OPD</span></td>
+            <td><span class="status-badge status-pending">Tidak Aktif</span></td>
+            <td style="font-family:var(--mono); font-size:0.73rem; color:var(--gray)">3 hari lalu</td>
+            <td><button class="card-btn">Edit</button> <button class="card-btn" style="color:var(--green)">Aktifkan</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// Trend Chart
+const trendCtx = document.getElementById('trendChart').getContext('2d');
+new Chart(trendCtx, {
+  type: 'line',
+  data: {
+    labels: ['Okt', 'Nov', 'Des', 'Jan', 'Feb', 'Mar'],
+    datasets: [
+      {
+        label: 'Dataset Baru',
+        data: [18, 22, 19, 28, 31, 35],
+        borderColor: '#E74C3C',
+        backgroundColor: 'rgba(192,57,43,0.08)',
+        borderWidth: 2,
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: '#E74C3C',
+        pointRadius: 4,
+      },
+      {
+        label: 'Unduhan (×100)',
+        data: [24, 30, 27, 38, 44, 48],
+        borderColor: '#D4A843',
+        backgroundColor: 'rgba(212,168,67,0.06)',
+        borderWidth: 2,
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: '#D4A843',
+        pointRadius: 4,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        labels: { color: '#8B949E', font: { size: 11, family: 'DM Sans' }, boxWidth: 14, padding: 15 }
+      }
+    },
+    scales: {
+      x: {
+        grid: { color: 'rgba(255,255,255,0.04)' },
+        ticks: { color: '#8B949E', font: { size: 11 } }
+      },
+      y: {
+        grid: { color: 'rgba(255,255,255,0.04)' },
+        ticks: { color: '#8B949E', font: { size: 11 } }
+      }
+    }
+  }
+});
+
+// Sektor Chart
+const sektorCtx = document.getElementById('sektorChart').getContext('2d');
+new Chart(sektorCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Kesehatan', 'Pertanian', 'Pendidikan', 'Ekonomi', 'Infrastruktur', 'Sosial', 'Lainnya'],
+    datasets: [{
+      data: [31, 27, 24, 22, 18, 15, 30],
+      backgroundColor: [
+        '#E74C3C', '#D4A843', '#3fb950', '#58a6ff',
+        '#f0883e', '#9b59b6', '#4d5057'
+      ],
+      borderWidth: 0,
+      hoverOffset: 6
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '68%',
+    plugins: {
+      legend: {
+        position: 'right',
+        labels: { color: '#8B949E', font: { size: 10, family: 'DM Sans' }, boxWidth: 10, padding: 8 }
+      }
+    }
+  }
+});
+
+// Role switcher
+function switchRole(btn, role) {
+  document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  // Could update dashboard view based on role
+}
+</script>
+
+<script src="ngadhu-anim.js"></script>
+<script>
+(function(){
+  /* Animate progress bars on load */
+  setTimeout(function(){
+    document.querySelectorAll('.progress-fill, .pb-fill').forEach(function(bar){
+      var w = bar.dataset.w || bar.style.width || bar.getAttribute('style');
+      if(w){ bar.style.width='0'; setTimeout(function(){bar.style.width=w.replace(/.*width:\s*/,'').replace(/[;'"]/g,'');},200); }
+    });
+  }, 500);
+
+  /* Counter for summary numbers */
+  document.querySelectorAll('.summary-value, .kpi-value, .stat-number').forEach(function(el){
+    var raw = el.textContent;
+    var num = parseFloat(raw.replace(/[^0-9.]/g,''));
+    if(isNaN(num)||num===0) return;
+    var suffix = raw.replace(/[\d,. ]/g,'');
+    var dur=1400,start=null;
+    setTimeout(function(){
+      (function tick(ts){
+        if(!start)start=ts;
+        var p=Math.min((ts-start)/dur,1), e=1-Math.pow(1-p,3);
+        el.textContent=Math.floor(num*e).toLocaleString('id')+suffix;
+        if(p<1)requestAnimationFrame(tick);
+      })(performance.now());
+    },300);
+  });
+
+  /* Ripple on action buttons */
+  document.querySelectorAll('.btn-approve,.btn-reject,.btn-edit,.btn-add,.action-btn').forEach(function(btn){
+    btn.addEventListener('click',function(e){
+      var r=btn.getBoundingClientRect(),d=Math.max(btn.clientWidth,btn.clientHeight);
+      var sp=document.createElement('span');
+      sp.style.cssText='position:absolute;border-radius:50%;background:rgba(255,255,255,.3);width:'+d+'px;height:'+d+'px;left:'+(e.clientX-r.left-d/2)+'px;top:'+(e.clientY-r.top-d/2)+'px;transform:scale(0);animation:rp .5s ease-out;pointer-events:none';
+      btn.style.position='relative';btn.style.overflow='hidden';
+      btn.appendChild(sp);setTimeout(function(){sp.remove();},600);
+    });
+  });
+  document.head.insertAdjacentHTML('beforeend','<style>@keyframes rp{to{transform:scale(4);opacity:0}}</style>');
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profil Kabupaten Ngada — NGADHU</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root{--red:#C0392B;--red-l:#E74C3C;--gold:#D4A843;--dark:#0D1117;--dark2:#161B22;--dark3:#21262D;--gray:#8B949E;--font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;--display:'Playfair Display',serif;}
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:var(--font);background:var(--dark);color:white;}
+  .navbar{position:sticky;top:0;z-index:100;height:62px;background:rgba(13,17,23,0.97);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;}
+  .nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+  .nav-logo{width:34px;height:34px;background:linear-gradient(135deg,var(--red),var(--gold));border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:900;font-size:1rem;}
+  .nav-title{font-family:var(--display);font-size:1.2rem;font-weight:700;color:white;}
+  .nav-title span{color:var(--gold);}
+  .nav-links{display:flex;gap:0.2rem;}
+  .nav-links a{color:var(--gray);text-decoration:none;font-size:0.82rem;padding:0.45rem 0.8rem;border-radius:6px;transition:all 0.2s;}
+  .nav-links a:hover,.nav-links a.active{color:white;}
+  .nav-links a.active{color:var(--red-l);}
+  .btn-login{background:var(--red);color:white;padding:0.4rem 1rem;border-radius:6px;text-decoration:none;font-size:0.82rem;font-weight:600;}
+
+  /* HERO */
+  .profil-hero{background:linear-gradient(135deg,rgba(192,57,43,0.15),rgba(212,168,67,0.08),var(--dark2));padding:4rem 2rem;border-bottom:1px solid rgba(255,255,255,0.05);position:relative;overflow:hidden;}
+  .profil-hero::before{content:'🏔️';position:absolute;right:5%;top:50%;transform:translateY(-50%);font-size:10rem;opacity:0.05;}
+  .profil-hero-inner{max-width:1100px;margin:0 auto;}
+  .breadcrumb{display:flex;gap:6px;font-size:0.75rem;color:var(--gray);margin-bottom:1rem;}
+  .breadcrumb a{color:var(--gray);text-decoration:none;}
+  .breadcrumb .current{color:var(--red-l);}
+  .profil-hero h1{font-family:var(--display);font-size:2.5rem;font-weight:900;margin-bottom:0.5rem;}
+  .profil-hero h1 span{color:var(--gold);}
+  .profil-hero p{color:var(--gray);font-size:0.95rem;max-width:600px;line-height:1.7;}
+  .hero-facts{display:flex;gap:2rem;flex-wrap:wrap;margin-top:2rem;}
+  .hero-fact{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:1rem 1.5rem;text-align:center;}
+  .hero-fact .num{font-family:var(--display);font-size:1.6rem;font-weight:700;display:block;color:white;}
+  .hero-fact .lbl{font-size:0.75rem;color:var(--gray);}
+
+  /* LAYOUT */
+  .page-content{max-width:1100px;margin:0 auto;padding:3rem 2rem;}
+  .section{margin-bottom:3.5rem;}
+  .section-label{font-family:var(--mono);font-size:0.72rem;color:var(--red-l);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;}
+  .section-title{font-family:var(--display);font-size:1.7rem;font-weight:700;margin-bottom:1.2rem;}
+  .divider{height:1px;background:linear-gradient(90deg,transparent,rgba(192,57,43,0.3),transparent);margin:3rem 0;}
+
+  /* IDENTITAS */
+  .identitas-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+  .identitas-card{background:var(--dark3);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:1.5rem;}
+  .info-row{display:flex;justify-content:space-between;padding:0.55rem 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.84rem;}
+  .info-row:last-child{border-bottom:none;}
+  .info-row .key{color:var(--gray);}
+  .info-row .val{font-weight:600;text-align:right;}
+  .visi-box{background:linear-gradient(135deg,rgba(192,57,43,0.12),rgba(212,168,67,0.07));border:1px solid rgba(192,57,43,0.2);border-radius:12px;padding:2rem;margin-bottom:1rem;}
+  .visi-label{font-size:0.7rem;color:var(--gold);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.8rem;font-family:var(--mono);}
+  .visi-text{font-family:var(--display);font-size:1.15rem;font-weight:700;line-height:1.55;color:white;}
+
+  /* KECAMATAN */
+  .kec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;}
+  .kec-card{background:var(--dark3);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:1.2rem;transition:all 0.2s;cursor:pointer;}
+  .kec-card:hover{border-color:rgba(192,57,43,0.3);transform:translateY(-2px);}
+  .kec-name{font-size:0.92rem;font-weight:700;margin-bottom:0.5rem;}
+  .kec-ibu{font-size:0.75rem;color:var(--gold);margin-bottom:0.6rem;}
+  .kec-stats{display:flex;gap:0.8rem;flex-wrap:wrap;}
+  .kec-stat{font-size:0.72rem;color:var(--gray);font-family:var(--mono);}
+
+  /* POTENSI */
+  .potensi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.2rem;}
+  .potensi-card{background:var(--dark3);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:1.3rem;transition:all 0.2s;}
+  .potensi-card:hover{border-color:rgba(212,168,67,0.25);}
+  .potensi-icon{font-size:2rem;margin-bottom:0.8rem;}
+  .potensi-title{font-size:0.9rem;font-weight:700;margin-bottom:0.4rem;}
+  .potensi-desc{font-size:0.8rem;color:var(--gray);line-height:1.6;}
+
+  /* PEJABAT */
+  .pejabat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.2rem;}
+  .pejabat-card{background:var(--dark3);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:1.5rem;text-align:center;transition:all 0.2s;}
+  .pejabat-card:hover{border-color:rgba(192,57,43,0.25);}
+  .pejabat-avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--red),var(--gold));display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin:0 auto 1rem;}
+  .pejabat-nama{font-size:0.9rem;font-weight:700;margin-bottom:0.2rem;}
+  .pejabat-jabatan{font-size:0.75rem;color:var(--gray);line-height:1.4;}
+
+  @media(max-width:768px){.identitas-grid{grid-template-columns:1fr;}.hero-facts{gap:0.8rem;}.nav-links{display:none;}}
+
+  /* PROFIL ANIMATIONS */
+  .profil-hero h1 { animation:hero-in .7s cubic-bezier(.22,1,.36,1) both .1s; }
+  .profil-hero p  { animation:hero-in .6s ease both .2s; }
+  @keyframes hero-in{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+
+  .hero-fact { opacity:0; transform:translateY(18px) scale(.95); animation:fact-in .45s cubic-bezier(.22,1,.36,1) both; }
+  .hero-fact:nth-child(1){animation-delay:.3s}.hero-fact:nth-child(2){animation-delay:.38s}
+  .hero-fact:nth-child(3){animation-delay:.46s}.hero-fact:nth-child(4){animation-delay:.54s}
+  .hero-fact:nth-child(5){animation-delay:.62s}
+  @keyframes fact-in{to{opacity:1;transform:none}}
+  .hero-fact:hover { transform:translateY(-3px) scale(1.04) !important; transition:transform .25s; }
+
+  .kec-card { opacity:0; transform:scale(.95); transition:opacity .45s ease,transform .45s cubic-bezier(.22,1,.36,1), border-color .2s, box-shadow .2s; }
+  .kec-card.visible { opacity:1; transform:none; }
+  .kec-card:hover { transform:translateY(-4px) scale(1.02) !important; box-shadow:0 8px 26px rgba(192,57,43,.18); }
+
+  .potensi-card { opacity:0; transform:translateY(22px); transition:opacity .5s ease,transform .5s cubic-bezier(.22,1,.36,1), border-color .2s; }
+  .potensi-card.visible { opacity:1; transform:none; }
+  .potensi-card:hover { border-color:rgba(212,168,67,.35) !important; transform:translateY(-4px) !important; }
+
+  .pejabat-card { opacity:0; transform:translateY(18px); transition:opacity .45s ease,transform .45s cubic-bezier(.22,1,.36,1); }
+  .pejabat-card.visible { opacity:1; transform:none; }
+  .pejabat-card:hover { transform:translateY(-5px) !important; }
+
+  .visi-box { animation:visi-in .7s cubic-bezier(.22,1,.36,1) both .2s; opacity:0; }
+  @keyframes visi-in{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:none}}
+
+  .identitas-card { opacity:0; animation:id-in .5s ease both; }
+  .identitas-card:nth-child(1){animation-delay:.15s}.identitas-card:nth-child(2){animation-delay:.25s}
+  @keyframes id-in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+  .section-label { animation:label-in .4s ease both; }
+  @keyframes label-in{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+
+  .divider { transform:scaleX(0); transform-origin:left; transition:transform 1.2s cubic-bezier(.4,0,.2,1); }
+  .divider.visible { transform:scaleX(1); }
+
+  .pejabat-avatar { transition:transform .25s cubic-bezier(.34,1.56,.64,1); }
+  .pejabat-card:hover .pejabat-avatar { transform:scale(1.12) rotate(5deg); }
+
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="index.html" class="nav-brand"><div class="nav-logo">N</div><span class="nav-title">NGADHU<span></span></span></a>
+  <div class="nav-links">
+    <a href="index.html">Beranda</a><a href="dataset-list.html">Dataset</a><a href="analitik.html">Analitik</a>
+    <a href="profil.html" class="active">Profil</a><a href="berita.html">Berita</a>
+  </div>
+  <a href="login.html" class="btn-login">Masuk</a>
+</nav>
+
+<div class="profil-hero">
+  <div class="profil-hero-inner">
+    <div class="breadcrumb"><a href="index.html">Beranda</a><span>›</span><span class="current">Profil Daerah</span></div>
+    <h1>Profil <span>Kabupaten Ngada</span></h1>
+    <p>Mengenal lebih dalam Kabupaten Ngada — daerah di jantung Pulau Flores, Nusa Tenggara Timur, dengan kekayaan budaya, alam, dan potensi pembangunan yang luar biasa.</p>
+    <div class="hero-facts">
+      <div class="hero-fact ng-reveal-scale"><span class="num">11</span><span class="lbl">Kecamatan</span></div>
+      <div class="hero-fact ng-reveal-scale"><span class="num">113</span><span class="lbl">Desa / Kelurahan</span></div>
+      <div class="hero-fact ng-reveal-scale"><span class="num">166rb</span><span class="lbl">Penduduk (2024)</span></div>
+      <div class="hero-fact ng-reveal-scale"><span class="num">1.645</span><span class="lbl">km² Luas Wilayah</span></div>
+      <div class="hero-fact ng-reveal-scale"><span class="num">1991</span><span class="lbl">Tahun Berdiri</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="page-content">
+
+  <!-- IDENTITAS -->
+  <div class="section">
+    <div class="section-label">// Identitas Daerah</div>
+    <div class="section-title">Kabupaten Ngada</div>
+    <div class="identitas-grid">
+      <div class="identitas-card">
+        <div class="info-row"><span class="key">Ibu Kota</span><span class="val">Bajawa</span></div>
+        <div class="info-row"><span class="key">Provinsi</span><span class="val">Nusa Tenggara Timur</span></div>
+        <div class="info-row"><span class="key">Kode Wilayah</span><span class="val">5310</span></div>
+        <div class="info-row"><span class="key">Dasar Hukum</span><span class="val">UU No. 69 Tahun 1958</span></div>
+        <div class="info-row"><span class="key">Jumlah Kecamatan</span><span class="val">11 Kecamatan</span></div>
+        <div class="info-row"><span class="key">Jumlah Desa</span><span class="val">113 Desa/Kelurahan</span></div>
+        <div class="info-row"><span class="key">Luas Wilayah</span><span class="val">1.645,84 km²</span></div>
+        <div class="info-row"><span class="key">Koordinat</span><span class="val">8°39'–8°57' LS, 120°48'–121°11' BT</span></div>
+      </div>
+      <div>
+        <div class="visi-box">
+          <div class="visi-label">Visi Kabupaten Ngada 2021–2026</div>
+          <div class="visi-text">"Terwujudnya Kabupaten Ngada yang Maju, Mandiri, dan Sejahtera Berbasis pada Nilai-Nilai Budaya Lokal"</div>
+        </div>
+        <div class="identitas-card">
+          <div class="info-row"><span class="key">Website Resmi</span><span class="val">ngadakab.go.id</span></div>
+          <div class="info-row"><span class="key">Email</span><span class="val">info@ngadakab.go.id</span></div>
+          <div class="info-row"><span class="key">Kode Pos</span><span class="val">86415</span></div>
+          <div class="info-row"><span class="key">Ketinggian (Bajawa)</span><span class="val">±1.050 mdpl</span></div>
+          <div class="info-row"><span class="key">Gunung Tertinggi</span><span class="val">Inerie (2.245 m)</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- PEJABAT -->
+  <div class="section">
+    <div class="section-label">// Pimpinan Daerah</div>
+    <div class="section-title">Pejabat Kabupaten Ngada</div>
+    <div class="pejabat-grid">
+      <div class="pejabat-card ng-reveal-up ng-tilt"><div class="pejabat-avatar">👤</div><div class="pejabat-nama">Bupati Ngada</div><div class="pejabat-jabatan">Kepala Daerah Kabupaten Ngada<br>Periode 2021–2026</div></div>
+      <div class="pejabat-card ng-reveal-up ng-tilt"><div class="pejabat-avatar">👤</div><div class="pejabat-nama">Wakil Bupati Ngada</div><div class="pejabat-jabatan">Wakil Kepala Daerah Kabupaten Ngada<br>Periode 2021–2026</div></div>
+      <div class="pejabat-card ng-reveal-up ng-tilt"><div class="pejabat-avatar">🏛️</div><div class="pejabat-nama">Sekretaris Daerah</div><div class="pejabat-jabatan">Kepala Sekretariat Daerah<br>Kabupaten Ngada</div></div>
+      <div class="pejabat-card ng-reveal-up ng-tilt"><div class="pejabat-avatar">📋</div><div class="pejabat-nama">Ketua DPRD</div><div class="pejabat-jabatan">Dewan Perwakilan Rakyat Daerah<br>Kabupaten Ngada</div></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- KECAMATAN -->
+  <div class="section">
+    <div class="section-label">// Wilayah Administrasi</div>
+    <div class="section-title">11 Kecamatan di Kabupaten Ngada</div>
+    <div class="kec-grid">
+      <div class="kec-card ng-reveal-scale ng-tilt"><div class="kec-name">Bajawa</div><div class="kec-ibu">⭐ Ibu Kota Kabupaten</div><div class="kec-stats"><span class="kec-stat">📍 ~9 Desa</span><span class="kec-stat">👥 ~45rb jiwa</span></div></div>
+      <div class="kec-card ng-reveal-scale ng-tilt"><div class="kec-name">Bajawa Utara</div><div class="kec-ibu">Ibu Kota: Naru</div><div class="kec-stats"><span class="kec-stat">📍 ~8 Desa</span><span class="kec-stat">👥 ~12rb jiwa</span></div></div>
+      <div class="kec-card ng-reveal-scale ng-tilt"><div class="kec-name">Golewa</div><div class="kec-ibu">Ibu Kota: Golewa</div><div class="kec-stats"><span class="kec-stat">📍 ~14 Desa</span><span class="kec-stat">👥 ~22rb jiwa</span></div></div>
+      <div class="kec-card ng-reveal-scale ng-tilt"><div class="kec-name">Golewa Barat</div><div class="kec-ibu">Ibu Kota: Mataloko</div><div class="kec-stats"><span class="kec-stat">📍 ~10 Desa</span><span class="kec-stat">👥 ~10rb jiwa</span></div></div>
+      <div class="kec-card ng-reveal-scale ng-tilt"><div class="kec-name">Golewa Selatan</div><div class="kec-ibu">Ibu Kota: Boawae</div><div class="kec-stats"><span class="kec-stat">📍 ~10 Desa</span><span class="kec-stat">👥 ~9rb jiwa</span></div></div>
+      <div class="kec-card ng-reveal-scale ng-tilt"><div class="kec-name">Inerie</div><div class="kec-ibu">Ibu Kota: Kaligejo</div><div class="kec-stats"><span class="kec-stat">📍 ~11 Desa</span><span class="kec-stat">👥 ~15rb jiwa</span></div></div>
+      <div class="kec-card ng-reveal-scale ng-tilt"><div class="kec-name">Jerebuu</div><div class="kec-ibu">Ibu Kota: Tura</div><div class="kec-stats"><span class="kec-stat">📍 ~12 Desa</span><span class="kec-stat">👥 ~13rb jiwa</span></div></div>
+      <div class="kec-card ng-reveal-scale ng-tilt"><div class="kec-name">Aimere</div><div class="kec-ibu">Ibu Kota: Aimere</div><div class="kec-stats"><span class="kec-stat">📍 ~9 Desa</span><span class="kec-stat">👥 ~18rb jiwa</span></div></div>
+      <div class="kec-card ng-reveal-scale ng-tilt"><div class="kec-name">Riung</div><div class="kec-ibu">Ibu Kota: Riung</div><div class="kec-stats"><span class="kec-stat">📍 ~11 Desa</span><span class="kec-stat">👥 ~11rb jiwa</span></div></div>
+      <div class="kec-card ng-reveal-scale ng-tilt"><div class="kec-name">Riung Barat</div><div class="kec-ibu">Ibu Kota: Latung</div><div class="kec-stats"><span class="kec-stat">📍 ~9 Desa</span><span class="kec-stat">👥 ~8rb jiwa</span></div></div>
+      <div class="kec-card ng-reveal-scale ng-tilt"><div class="kec-name">Wolomeze</div><div class="kec-ibu">Ibu Kota: Seso</div><div class="kec-stats"><span class="kec-stat">📍 ~10 Desa</span><span class="kec-stat">👥 ~9rb jiwa</span></div></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- POTENSI -->
+  <div class="section">
+    <div class="section-label">// Potensi Daerah</div>
+    <div class="section-title">Potensi Unggulan Ngada</div>
+    <div class="potensi-grid">
+      <div class="potensi-card ng-reveal-up ng-spotlight"><div class="potensi-icon">🌋</div><div class="potensi-title">Pariwisata Alam & Budaya</div><div class="potensi-desc">Kampung adat Bena (Warisan Budaya Dunia), Danau Rana, Gunung Inerie, Pantai Riung 17 Pulau, dan tradisi Reba yang unik.</div></div>
+      <div class="potensi-card ng-reveal-up ng-spotlight"><div class="potensi-icon">☕</div><div class="potensi-title">Kopi Arabika Ngada</div><div class="potensi-desc">Kopi Arabika Bajawa terkenal secara internasional dengan cita rasa unik, ditanam di ketinggian >1.000 mdpl dengan metode tradisional.</div></div>
+      <div class="potensi-card ng-reveal-up ng-spotlight"><div class="potensi-icon">🌾</div><div class="potensi-title">Pertanian & Hortikultura</div><div class="potensi-desc">Sentra produksi padi, jagung, kopi, vanili, kemiri, dan berbagai komoditas hortikultura unggulan Flores.</div></div>
+      <div class="potensi-card ng-reveal-up ng-spotlight"><div class="potensi-icon">🌊</div><div class="potensi-title">Kelautan & Perikanan</div><div class="potensi-desc">Kawasan Riung dengan keanekaragaman hayati laut yang tinggi, potensial untuk ekowisata bahari dan budidaya rumput laut.</div></div>
+      <div class="potensi-card ng-reveal-up ng-spotlight"><div class="potensi-icon">⚡</div><div class="potensi-title">Energi Panas Bumi</div><div class="potensi-desc">Potensi geothermal besar di sekitar Gunung Inie Lika dan wilayah sekitarnya, prospek energi terbarukan yang signifikan.</div></div>
+      <div class="potensi-card ng-reveal-up ng-spotlight"><div class="potensi-icon">🏺</div><div class="potensi-title">Kerajinan & Tenun Ikat</div><div class="potensi-desc">Tenun ikat tradisional Ngada dengan motif khas, anyaman bambu, dan kerajinan tangan berbahan lokal bernilai ekspor tinggi.</div></div>
+    </div>
+  </div>
+
+</div>
+
+<script src="ngadhu-anim.js"></script>
+<script>
+(function(){
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        var children=e.target.querySelectorAll('.kec-card,.potensi-card,.pejabat-card');
+        if(children.length){
+          children.forEach(function(c,i){setTimeout(function(){c.classList.add('visible');},i*80);});
+        } else {
+          e.target.classList.add('visible');
+        }
+        io.unobserve(e.target);
+      }
+    });
+  },{threshold:.08});
+  document.querySelectorAll('.kec-grid,.potensi-grid,.pejabat-grid,.divider').forEach(function(g){io.observe(g);});
+  document.querySelectorAll('.kec-card,.potensi-card,.pejabat-card,.divider').forEach(function(el){io.observe(el);});
+
+  /* Fact number counters */
+  document.querySelectorAll('.hero-fact .num').forEach(function(el){
+    var raw=el.textContent;
+    var n=parseFloat(raw.replace(/[^0-9.]/g,''));
+    if(isNaN(n)||n<10) return;
+    var suf=raw.replace(/[\d.]/g,'');
+    var dur=1400,start=null;
+    setTimeout(function(){
+      (function tick(ts){
+        if(!start)start=ts;
+        var p=Math.min((ts-start)/dur,1),e=1-Math.pow(1-p,3),v=n*e;
+        el.textContent=(Number.isInteger(n)?Math.floor(v).toLocaleString('id'):v.toFixed(0))+suf;
+        if(p<1)requestAnimationFrame(tick);
+      })(performance.now());
+    },400);
+  });
+})();
+</script>
+</body>
+</html>

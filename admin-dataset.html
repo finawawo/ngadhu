@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upload Dataset — Dashboard NGADHU</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root{--red:#C0392B;--red-l:#E74C3C;--gold:#D4A843;--dark:#0D1117;--dark2:#161B22;--dark3:#21262D;--gray:#8B949E;--green:#3fb950;--font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;--display:'Playfair Display',serif;}
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:var(--font);background:var(--dark);color:white;display:flex;min-height:100vh;}
+
+  /* SIDEBAR (simplified) */
+  .sidebar{width:220px;background:var(--dark2);border-right:1px solid rgba(255,255,255,0.06);padding:1.2rem;flex-shrink:0;}
+  .sidebar-brand{display:flex;align-items:center;gap:8px;margin-bottom:2rem;text-decoration:none;}
+  .sidebar-logo{width:32px;height:32px;background:linear-gradient(135deg,var(--red),var(--gold));border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:900;}
+  .sidebar-name{font-family:var(--display);font-size:1rem;font-weight:700;color:white;}
+  .nav-item{display:flex;align-items:center;gap:8px;padding:0.55rem 0.7rem;border-radius:7px;color:var(--gray);text-decoration:none;font-size:0.82rem;transition:all 0.2s;margin-bottom:2px;}
+  .nav-item:hover{color:white;background:rgba(255,255,255,0.05);}
+  .nav-item.active{color:white;background:rgba(192,57,43,0.15);border:1px solid rgba(192,57,43,0.2);}
+
+  /* MAIN */
+  .main{flex:1;display:flex;flex-direction:column;overflow-x:hidden;}
+  .topbar{height:58px;background:var(--dark2);border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;}
+  .topbar-title{font-size:0.95rem;font-weight:600;}
+  .topbar-right{display:flex;gap:0.8rem;align-items:center;}
+  .tbtn{background:var(--dark3);border:1px solid rgba(255,255,255,0.08);color:var(--gray);padding:0.4rem 0.9rem;border-radius:6px;font-family:var(--font);font-size:0.78rem;cursor:pointer;transition:all 0.2s;}
+  .tbtn:hover{color:white;} .tbtn.primary{background:var(--red);color:white;border-color:var(--red);}
+
+  .content{padding:1.5rem;flex:1;}
+  .form-grid{display:grid;grid-template-columns:1fr 320px;gap:1.5rem;max-width:1100px;}
+
+  /* FORM CARD */
+  .form-card{background:var(--dark3);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:1.5rem;margin-bottom:1.2rem;}
+  .form-card-title{font-size:0.85rem;font-weight:700;margin-bottom:1.2rem;padding-bottom:0.8rem;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:8px;}
+
+  .form-row{display:grid;gap:1rem;margin-bottom:1rem;}
+  .form-row.cols-2{grid-template-columns:1fr 1fr;}
+  .form-row.cols-3{grid-template-columns:1fr 1fr 1fr;}
+  .form-group{display:flex;flex-direction:column;gap:0.4rem;}
+  .form-label{font-size:0.75rem;font-weight:600;color:var(--gray);letter-spacing:0.04em;}
+  .form-label .req{color:var(--red-l);}
+  .form-input,.form-select,.form-textarea{background:var(--dark2);border:1px solid rgba(255,255,255,0.08);color:white;padding:0.65rem 0.9rem;border-radius:8px;font-family:var(--font);font-size:0.85rem;outline:none;transition:border-color 0.2s;width:100%;}
+  .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:rgba(192,57,43,0.5);box-shadow:0 0 0 3px rgba(192,57,43,0.08);}
+  .form-input::placeholder,.form-textarea::placeholder{color:rgba(139,148,158,0.5);}
+  .form-textarea{resize:vertical;min-height:100px;line-height:1.6;}
+  .form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='12' height='7' viewBox='0 0 12 7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%238B949E' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;cursor:pointer;}
+  .form-hint{font-size:0.72rem;color:var(--gray);}
+
+  /* DROPZONE */
+  .dropzone{border:2px dashed rgba(255,255,255,0.12);border-radius:10px;padding:2.5rem;text-align:center;cursor:pointer;transition:all 0.25s;position:relative;}
+  .dropzone:hover,.dropzone.dragover{border-color:rgba(192,57,43,0.5);background:rgba(192,57,43,0.05);}
+  .dropzone-icon{font-size:2.5rem;margin-bottom:0.8rem;display:block;}
+  .dropzone-text{font-size:0.88rem;color:var(--gray);line-height:1.6;}
+  .dropzone-text strong{color:var(--red-l);}
+  .dropzone-formats{font-size:0.73rem;color:var(--gray);margin-top:0.5rem;font-family:var(--mono);}
+  .dropzone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;}
+
+  /* FILE LIST */
+  .file-list{display:flex;flex-direction:column;gap:0.5rem;margin-top:0.8rem;}
+  .file-item{display:flex;align-items:center;gap:10px;background:var(--dark2);border:1px solid rgba(255,255,255,0.06);border-radius:7px;padding:0.6rem 0.8rem;}
+  .file-icon{font-size:1rem;flex-shrink:0;}
+  .file-name{font-size:0.8rem;font-family:var(--mono);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .file-size{font-size:0.72rem;color:var(--gray);flex-shrink:0;}
+  .file-remove{background:none;border:none;color:var(--gray);cursor:pointer;padding:2px 5px;border-radius:3px;font-size:0.85rem;transition:color 0.2s;}
+  .file-remove:hover{color:var(--red-l);}
+
+  /* TAGS INPUT */
+  .tags-wrap{background:var(--dark2);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:0.5rem;display:flex;flex-wrap:wrap;gap:0.4rem;cursor:text;transition:border-color 0.2s;}
+  .tags-wrap:focus-within{border-color:rgba(192,57,43,0.5);}
+  .tag-chip{background:rgba(192,57,43,0.15);color:var(--red-l);padding:3px 8px;border-radius:4px;font-size:0.75rem;display:flex;align-items:center;gap:4px;}
+  .tag-chip button{background:none;border:none;color:var(--red-l);cursor:pointer;font-size:0.85rem;padding:0;line-height:1;}
+  .tag-input{background:transparent;border:none;outline:none;color:white;font-family:var(--font);font-size:0.83rem;min-width:80px;flex:1;}
+
+  /* KECAMATAN CHECKBOXES */
+  .kec-checks{display:grid;grid-template-columns:1fr 1fr;gap:0.3rem;}
+  .kec-check{display:flex;align-items:center;gap:6px;font-size:0.8rem;color:var(--gray);cursor:pointer;padding:0.25rem 0;}
+  .kec-check input{accent-color:var(--red);}
+  .kec-check:has(input:checked){color:white;}
+
+  /* SIDEBAR CARDS */
+  .side-card{background:var(--dark3);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:1.2rem;margin-bottom:1rem;}
+  .side-card-title{font-size:0.75rem;font-weight:700;color:var(--gray);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:1rem;}
+
+  .checklist-item{display:flex;align-items:center;gap:8px;font-size:0.82rem;padding:0.35rem 0;}
+  .check-circle{width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .check-circle.done{border-color:var(--green);background:rgba(63,185,80,0.15);}
+  .check-circle.done::after{content:'✓';font-size:0.6rem;color:var(--green);}
+
+  .progress-steps{display:flex;flex-direction:column;gap:0.3rem;}
+  .step{display:flex;align-items:center;gap:10px;padding:0.5rem 0;font-size:0.82rem;color:var(--gray);}
+  .step.active{color:white;} .step.done{color:var(--green);}
+  .step-num{width:22px;height:22px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:0.7rem;flex-shrink:0;}
+  .step.active .step-num{border-color:var(--red);background:rgba(192,57,43,0.2);color:var(--red-l);}
+  .step.done .step-num{border-color:var(--green);background:rgba(63,185,80,0.15);color:var(--green);}
+
+  /* SUBMIT BTN */
+  .btn-submit{width:100%;background:linear-gradient(135deg,var(--red),#a93226);color:white;border:none;padding:0.85rem;border-radius:9px;font-family:var(--font);font-size:0.92rem;font-weight:600;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 15px rgba(192,57,43,0.3);}
+  .btn-submit:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(192,57,43,0.4);}
+  .btn-draft{width:100%;background:transparent;color:var(--gray);border:1px solid rgba(255,255,255,0.1);padding:0.75rem;border-radius:9px;font-family:var(--font);font-size:0.88rem;cursor:pointer;transition:all 0.2s;margin-top:0.5rem;}
+  .btn-draft:hover{color:white;border-color:rgba(255,255,255,0.25);}
+
+  @media(max-width:900px){.form-grid{grid-template-columns:1fr;}.form-row.cols-2,.form-row.cols-3{grid-template-columns:1fr;}}
+
+  /* ADMIN DATASET ANIMATIONS */
+  .topbar { animation:topbar-in .4s ease both; }
+  @keyframes topbar-in{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
+
+  .form-card { opacity:0; transform:translateY(18px); animation:card-in .45s ease both; }
+  .form-card:nth-child(1){animation-delay:.1s}.form-card:nth-child(2){animation-delay:.2s}
+  .form-card:nth-child(3){animation-delay:.3s}.form-card:nth-child(4){animation-delay:.4s}
+  @keyframes card-in{to{opacity:1;transform:none}}
+
+  .side-card { opacity:0; transform:translateX(16px); animation:sc-in .45s ease both; }
+  .side-card:nth-child(1){animation-delay:.15s}.side-card:nth-child(2){animation-delay:.25s}
+  .side-card:nth-child(3){animation-delay:.35s}.side-card:nth-child(4){animation-delay:.45s}
+  @keyframes sc-in{to{opacity:1;transform:none}}
+
+  .form-input,.form-select,.form-textarea { transition:border-color .2s,box-shadow .2s; }
+  .form-input:focus,.form-select:focus,.form-textarea:focus { box-shadow:0 0 0 3px rgba(192,57,43,.12); }
+
+  .dropzone { transition:border-color .25s,background .25s,transform .2s; }
+  .dropzone:hover { transform:scale(1.01); }
+
+  .file-item { animation:file-in .3s cubic-bezier(.22,1,.36,1) both; }
+  @keyframes file-in{from{opacity:0;transform:translateX(-10px) scale(.95)}to{opacity:1;transform:none}}
+
+  .tag-chip { animation:chip-in .3s cubic-bezier(.34,1.56,.64,1) both; }
+  @keyframes chip-in{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:scale(1)}}
+
+  .btn-submit { transition:transform .15s,box-shadow .2s,background .2s; position:relative; overflow:hidden; }
+  .btn-submit:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(192,57,43,.4); }
+  .btn-draft  { transition:color .2s,border-color .2s,transform .15s; }
+  .btn-draft:hover { transform:translateY(-1px); }
+
+  .step { transition:color .3s; }
+  .step.active { animation:step-pulse 2s ease-in-out infinite; }
+  @keyframes step-pulse{0%,100%{opacity:1}50%{opacity:.7}}
+
+  .check-circle.done { animation:check-pop .35s cubic-bezier(.34,1.56,.64,1) both; }
+  @keyframes check-pop{from{transform:scale(0)}to{transform:scale(1)}}
+
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <a href="dashboard.html" class="sidebar-brand">
+    <div class="sidebar-logo">N</div>
+    <div class="sidebar-name">NGADHU</div>
+  </a>
+  <a class="nav-item" href="dashboard.html">📊 Dashboard</a>
+  <a class="nav-item active" href="#">🗄️ Dataset</a>
+  <a class="nav-item" href="#">📈 Analitik</a>
+  <a class="nav-item" href="#">🗺️ Peta SPM</a>
+  <a class="nav-item" href="#">👥 Pengguna</a>
+  <a class="nav-item" href="#">🏢 Organisasi</a>
+  <a class="nav-item" href="#">📰 Berita</a>
+  <a class="nav-item" href="#">⚙️ Pengaturan</a>
+  <a class="nav-item" href="index.html">🌐 Lihat Portal</a>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div>
+      <div class="topbar-title">Upload Dataset Baru</div>
+      <div style="font-size:0.72rem;color:var(--gray);">Dashboard › Dataset › Upload Baru</div>
+    </div>
+    <div class="topbar-right">
+      <button class="tbtn" onclick="history.back()">← Kembali</button>
+      <button class="tbtn primary" onclick="submitForm()">Kirim untuk Review</button>
+    </div>
+  </header>
+
+  <div class="content">
+    <div class="form-grid">
+      <!-- MAIN FORM -->
+      <div>
+        <!-- INFORMASI DASAR -->
+        <div class="form-card ng-reveal-up">
+          <div class="form-card-title">📋 Informasi Dasar Dataset</div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Judul Dataset <span class="req">*</span></label>
+              <input type="text" class="form-input" id="judulInput" placeholder="Cth: Data Stunting per Desa Kabupaten Ngada 2024" oninput="updateSlug()">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Slug (URL)</label>
+              <input type="text" class="form-input" id="slugInput" placeholder="auto-generate dari judul" style="font-family:var(--mono);font-size:0.8rem;">
+              <div class="form-hint">Akan digunakan sebagai URL dataset. Otomatis diisi dari judul.</div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Deskripsi <span class="req">*</span></label>
+              <textarea class="form-textarea" placeholder="Jelaskan isi dataset, cakupan data, metodologi pengumpulan, dan catatan penting lainnya..."></textarea>
+            </div>
+          </div>
+
+          <div class="form-row cols-3">
+            <div class="form-group">
+              <label class="form-label">Tipe Data <span class="req">*</span></label>
+              <select class="form-select">
+                <option value="">Pilih Tipe</option>
+                <option value="numerik">Numerik</option>
+                <option value="non_numerik">Non-Numerik</option>
+                <option value="spasial">Spasial / GIS</option>
+                <option value="dokumen">Dokumen</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Urusan / Sektor <span class="req">*</span></label>
+              <select class="form-select">
+                <option value="">Pilih Urusan</option>
+                <option>Pendidikan</option>
+                <option>Kesehatan</option>
+                <option>Pekerjaan Umum</option>
+                <option>Sosial</option>
+                <option>Pertanian</option>
+                <option>Ekonomi</option>
+                <option>Pariwisata</option>
+                <option>Kelautan & Perikanan</option>
+                <option>Kependudukan</option>
+                <option>Lingkungan Hidup</option>
+                <option>Energi</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Organisasi / OPD <span class="req">*</span></label>
+              <select class="form-select">
+                <option value="">Pilih OPD</option>
+                <option>Dinas Kesehatan</option>
+                <option>Dinas Pendidikan</option>
+                <option>Dinas PUPR</option>
+                <option>Dinas Pertanian</option>
+                <option>Dinas Sosial</option>
+                <option>Dinas Pariwisata</option>
+                <option>BPS Kab. Ngada</option>
+                <option>Bappeda</option>
+                <option>Dinas Kelautan</option>
+                <option>Kominfo</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- PERIODE & SUMBER -->
+        <div class="form-card ng-reveal-up">
+          <div class="form-card-title">📅 Periode & Sumber Data</div>
+          <div class="form-row cols-2">
+            <div class="form-group">
+              <label class="form-label">Periode Awal <span class="req">*</span></label>
+              <input type="number" class="form-input" placeholder="2020" min="2000" max="2030">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Periode Akhir <span class="req">*</span></label>
+              <input type="number" class="form-input" placeholder="2024" min="2000" max="2030">
+            </div>
+          </div>
+          <div class="form-row cols-2">
+            <div class="form-group">
+              <label class="form-label">Frekuensi Pembaruan</label>
+              <select class="form-select">
+                <option>Tahunan</option>
+                <option>Semester</option>
+                <option>Triwulan</option>
+                <option>Bulanan</option>
+                <option>Mingguan</option>
+                <option>Harian</option>
+                <option>Tidak Teratur</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Lisensi</label>
+              <select class="form-select">
+                <option>CC BY 4.0</option>
+                <option>CC BY-SA 4.0</option>
+                <option>CC0 (Public Domain)</option>
+                <option>Terbatas / Perlu Persetujuan</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Sumber Data</label>
+              <input type="text" class="form-input" placeholder="Cth: Survei Sosial Ekonomi Nasional (Susenas) 2024">
+            </div>
+          </div>
+        </div>
+
+        <!-- UPLOAD FILE -->
+        <div class="form-card ng-reveal-up">
+          <div class="form-card-title">📁 Upload File Dataset</div>
+          <div class="dropzone" id="dropzone">
+            <input type="file" multiple accept=".csv,.xlsx,.xls,.json,.geojson,.zip,.pdf" onchange="handleFiles(this)">
+            <span class="dropzone-icon">☁️</span>
+            <div class="dropzone-text">
+              <strong>Klik untuk upload</strong> atau seret file ke sini<br>
+              <small>Maksimal 50MB per file</small>
+            </div>
+            <div class="dropzone-formats">Format: CSV · XLSX · JSON · GeoJSON · Shapefile (ZIP) · PDF</div>
+          </div>
+          <div class="file-list" id="fileList"></div>
+        </div>
+
+        <!-- TAGS & WILAYAH -->
+        <div class="form-card ng-reveal-up">
+          <div class="form-card-title">🏷️ Tags & Cakupan Wilayah</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Tags</label>
+              <div class="tags-wrap" id="tagsWrap" onclick="document.getElementById('tagInput').focus()">
+                <input type="text" id="tagInput" class="tag-input" placeholder="Ketik tag lalu tekan Enter...">
+              </div>
+              <div class="form-hint">Tambah tag untuk memudahkan pencarian dataset</div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Cakupan Kecamatan</label>
+              <div class="kec-checks">
+                <label class="kec-check"><input type="checkbox" value="Bajawa"> Bajawa</label>
+                <label class="kec-check"><input type="checkbox" value="Bajawa Utara"> Bajawa Utara</label>
+                <label class="kec-check"><input type="checkbox" value="Golewa"> Golewa</label>
+                <label class="kec-check"><input type="checkbox" value="Golewa Barat"> Golewa Barat</label>
+                <label class="kec-check"><input type="checkbox" value="Golewa Selatan"> Golewa Selatan</label>
+                <label class="kec-check"><input type="checkbox" value="Inerie"> Inerie</label>
+                <label class="kec-check"><input type="checkbox" value="Jerebuu"> Jerebuu</label>
+                <label class="kec-check"><input type="checkbox" value="Aimere"> Aimere</label>
+                <label class="kec-check"><input type="checkbox" value="Riung"> Riung</label>
+                <label class="kec-check"><input type="checkbox" value="Riung Barat"> Riung Barat</label>
+                <label class="kec-check"><input type="checkbox" value="Wolomeze"> Wolomeze</label>
+                <label class="kec-check" style="color:var(--gold)"><input type="checkbox" value="all" id="checkAll"> Pilih Semua</label>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Tambahan Keterangan</label>
+              <textarea class="form-textarea" placeholder="Catatan metodologi, asumsi, keterbatasan data, dll..." style="min-height:80px;"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT SIDEBAR -->
+      <div>
+        <!-- PROGRESS -->
+        <div class="side-card">
+          <div class="side-card-title">Progress Pengisian</div>
+          <div class="progress-steps">
+            <div class="step done"><div class="step-num">1</div>Informasi Dasar</div>
+            <div class="step active"><div class="step-num">2</div>Periode & Sumber</div>
+            <div class="step"><div class="step-num">3</div>Upload File</div>
+            <div class="step"><div class="step-num">4</div>Tags & Wilayah</div>
+            <div class="step"><div class="step-num">5</div>Review & Submit</div>
+          </div>
+        </div>
+
+        <!-- KELENGKAPAN -->
+        <div class="side-card">
+          <div class="side-card-title">Checklist Kelengkapan</div>
+          <div class="checklist-item"><div class="check-circle done"></div>Judul Dataset</div>
+          <div class="checklist-item"><div class="check-circle done"></div>Deskripsi</div>
+          <div class="checklist-item"><div class="check-circle done"></div>Tipe Data</div>
+          <div class="checklist-item"><div class="check-circle"></div>File Dataset (min. 1)</div>
+          <div class="checklist-item"><div class="check-circle"></div>Periode Data</div>
+          <div class="checklist-item"><div class="check-circle"></div>Sumber Data</div>
+          <div class="checklist-item"><div class="check-circle"></div>Tags</div>
+          <div class="checklist-item"><div class="check-circle"></div>Cakupan Wilayah</div>
+        </div>
+
+        <!-- SUBMIT -->
+        <div class="side-card">
+          <div class="side-card-title">Publikasi</div>
+          <div style="font-size:0.8rem;color:var(--gray);margin-bottom:1rem;line-height:1.6;">Dataset akan dikirim ke Admin untuk ditinjau sebelum dipublikasikan ke portal publik.</div>
+          <button class="btn-submit ng-ripple ng-magnetic" onclick="submitForm()">📤 Kirim untuk Review</button>
+          <button class="btn-draft" onclick="saveDraft()">💾 Simpan sebagai Draft</button>
+          <div style="font-size:0.72rem;color:var(--gray);margin-top:1rem;text-align:center;">Proses review biasanya 1–3 hari kerja</div>
+        </div>
+
+        <!-- PANDUAN -->
+        <div class="side-card">
+          <div class="side-card-title">📖 Panduan Upload</div>
+          <div style="font-size:0.78rem;color:var(--gray);line-height:1.8;">
+            ✓ Gunakan format CSV/XLSX untuk data tabel<br>
+            ✓ GeoJSON/Shapefile untuk data spasial<br>
+            ✓ Pastikan header kolom menggunakan nama yang jelas<br>
+            ✓ Sertakan satuan dalam nama kolom<br>
+            ✓ Hapus data sensitif/pribadi sebelum upload<br>
+            ✓ Satu dataset per topik/indikator
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Slug generator
+function updateSlug() {
+  const judul = document.getElementById('judulInput').value;
+  const slug = judul.toLowerCase()
+    .replace(/[^a-z0-9\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').trim();
+  document.getElementById('slugInput').value = slug;
+}
+
+// File handler
+function handleFiles(input) {
+  const list = document.getElementById('fileList');
+  const icons = {csv:'📊',xlsx:'📗',xls:'📗',json:'📋',geojson:'🗺️',zip:'🗜️',pdf:'📄'};
+  Array.from(input.files).forEach(f => {
+    const ext = f.name.split('.').pop().toLowerCase();
+    const size = f.size < 1024*1024 ? (f.size/1024).toFixed(1)+' KB' : (f.size/1024/1024).toFixed(1)+' MB';
+    const item = document.createElement('div');
+    item.className = 'file-item';
+    item.innerHTML = `<span class="file-icon">${icons[ext]||'📁'}</span><span class="file-name">${f.name}</span><span class="file-size">${size}</span><button class="file-remove" onclick="this.parentElement.remove()">✕</button>`;
+    list.appendChild(item);
+  });
+}
+
+// Drag & drop
+const dz = document.getElementById('dropzone');
+dz.addEventListener('dragover', e=>{e.preventDefault();dz.classList.add('dragover');});
+dz.addEventListener('dragleave', ()=>dz.classList.remove('dragover'));
+
+// Tags
+const tagInput = document.getElementById('tagInput');
+tagInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    const val = tagInput.value.trim();
+    if (val) {
+      const chip = document.createElement('span');
+      chip.className = 'tag-chip';
+      chip.innerHTML = `${val}<button onclick="this.parentElement.remove()">×</button>`;
+      document.getElementById('tagsWrap').insertBefore(chip, tagInput);
+      tagInput.value = '';
+    }
+  }
+});
+
+// Check all kecamatan
+document.getElementById('checkAll').addEventListener('change', function() {
+  document.querySelectorAll('.kec-checks input[type="checkbox"]').forEach(c => c.checked = this.checked);
+});
+
+function submitForm() {
+  const judul = document.getElementById('judulInput').value;
+  if (!judul) { alert('⚠️ Judul dataset wajib diisi!'); return; }
+  if (confirm('Kirim dataset "'+judul+'" untuk ditinjau oleh Admin?')) {
+    document.querySelector('.btn-submit').textContent = '✓ Berhasil Dikirim!';
+    document.querySelector('.btn-submit').style.background = 'linear-gradient(135deg, #3fb950, #28a745)';
+    setTimeout(() => window.location.href = 'dashboard.html', 1500);
+  }
+}
+
+function saveDraft() {
+  document.querySelector('.btn-draft').textContent = '✓ Tersimpan sebagai Draft';
+  setTimeout(() => document.querySelector('.btn-draft').textContent = '💾 Simpan sebagai Draft', 2000);
+}
+</script>
+
+<script src="ngadhu-anim.js"></script>
+<script>
+(function(){
+  /* Ripple submit */
+  var btn=document.querySelector('.btn-submit');
+  if(btn){
+    btn.addEventListener('click',function(e){
+      var r=btn.getBoundingClientRect(),d=Math.max(btn.clientWidth,btn.clientHeight);
+      var sp=document.createElement('span');
+      sp.style.cssText='position:absolute;border-radius:50%;background:rgba(255,255,255,.25);width:'+d+'px;height:'+d+'px;left:'+(e.clientX-r.left-d/2)+'px;top:'+(e.clientY-r.top-d/2)+'px;transform:scale(0);animation:rp .5s ease-out;pointer-events:none';
+      btn.appendChild(sp);setTimeout(function(){sp.remove();},600);
+    });
+  }
+  document.head.insertAdjacentHTML('beforeend','<style>@keyframes rp{to{transform:scale(4);opacity:0}}</style>');
+
+  /* Input focus effects */
+  document.querySelectorAll('.form-input,.form-select,.form-textarea').forEach(function(inp){
+    var wrap=inp.closest('.form-group');
+    if(!wrap) return;
+    inp.addEventListener('focus',function(){wrap.querySelector('.form-label') && (wrap.querySelector('.form-label').style.color='#E74C3C');});
+    inp.addEventListener('blur', function(){wrap.querySelector('.form-label') && (wrap.querySelector('.form-label').style.color='');});
+  });
+})();
+</script>
+</body>
+</html>

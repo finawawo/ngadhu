@@ -1,0 +1,2047 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NGADHU — Ngada Gerbang Akses Data Handal dan Utama</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ngadhu-red: #C0392B;
+    --ngadhu-red-dark: #96281B;
+    --ngadhu-red-light: #E74C3C;
+    --ngadhu-gold: #D4A843;
+    --ngadhu-gold-light: #F0C060;
+    --ngadhu-dark: #0D1117;
+    --ngadhu-dark2: #161B22;
+    --ngadhu-dark3: #21262D;
+    --ngadhu-gray: #8B949E;
+    --ngadhu-light: #F0F6FF;
+    --ngadhu-white: #FFFFFF;
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--ngadhu-dark);
+    color: var(--ngadhu-white);
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+
+  /* ===== SCROLLBAR ===== */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--ngadhu-dark); }
+  ::-webkit-scrollbar-thumb { background: var(--ngadhu-red); border-radius: 2px; }
+
+  /* ===== NAVBAR ===== */
+  .navbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    padding: 0 2rem;
+    height: 70px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(13, 17, 23, 0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(192, 57, 43, 0.2);
+    transition: all 0.3s ease;
+  }
+
+  .navbar.scrolled {
+    background: rgba(13, 17, 23, 0.97);
+    border-bottom-color: rgba(192, 57, 43, 0.4);
+  }
+
+  .nav-brand {
+    display: flex; align-items: center; gap: 12px;
+    text-decoration: none;
+  }
+
+  .nav-logo {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, var(--ngadhu-red), var(--ngadhu-gold));
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 900; font-size: 1.1rem;
+    color: white;
+    box-shadow: 0 4px 15px rgba(192, 57, 43, 0.4);
+  }
+
+  .nav-title {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 0.02em;
+  }
+
+  .nav-title span { color: var(--ngadhu-gold); }
+
+  .nav-menu {
+    display: flex; align-items: center; gap: 0.2rem;
+    list-style: none;
+  }
+
+  .nav-menu a {
+    color: var(--ngadhu-gray);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.5rem 0.8rem;
+    border-radius: 6px;
+    transition: all 0.2s;
+    letter-spacing: 0.03em;
+  }
+
+  .nav-menu a:hover { color: white; background: rgba(255,255,255,0.07); }
+
+  .nav-right { display: flex; align-items: center; gap: 1rem; }
+
+  .btn-login {
+    background: var(--ngadhu-red);
+    color: white;
+    padding: 0.45rem 1.2rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    letter-spacing: 0.03em;
+    border: 1px solid transparent;
+  }
+
+  .btn-login:hover {
+    background: var(--ngadhu-red-dark);
+    box-shadow: 0 4px 15px rgba(192, 57, 43, 0.4);
+    transform: translateY(-1px);
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    min-height: 100vh;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    padding-top: 70px;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(192, 57, 43, 0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, rgba(212, 168, 67, 0.1) 0%, transparent 45%),
+      radial-gradient(ellipse at 60% 80%, rgba(192, 57, 43, 0.08) 0%, transparent 40%),
+      var(--ngadhu-dark);
+  }
+
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(192,57,43,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(192,57,43,0.06) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .hero-content {
+    position: relative; z-index: 2;
+    text-align: center;
+    max-width: 900px;
+    padding: 2rem;
+    animation: heroIn 1s ease both;
+  }
+
+  @keyframes heroIn {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(192, 57, 43, 0.15);
+    border: 1px solid rgba(192, 57, 43, 0.3);
+    padding: 0.4rem 1rem;
+    border-radius: 100px;
+    font-size: 0.78rem;
+    font-family: var(--font-mono);
+    color: var(--ngadhu-gold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    animation: heroIn 1s ease 0.2s both;
+  }
+
+  .hero-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--ngadhu-red);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.5); }
+  }
+
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(3.5rem, 9vw, 7rem);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+    animation: heroIn 1s ease 0.3s both;
+  }
+
+  .hero-title .line1 { display: block; color: white; }
+  .hero-title .line2 {
+    display: block;
+    background: linear-gradient(135deg, var(--ngadhu-red-light), var(--ngadhu-gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-subtitle {
+    font-size: 1.05rem;
+    color: var(--ngadhu-gray);
+    max-width: 600px;
+    margin: 0 auto 2.5rem;
+    line-height: 1.7;
+    font-weight: 300;
+    animation: heroIn 1s ease 0.4s both;
+  }
+
+  .hero-subtitle strong { color: var(--ngadhu-gold); font-weight: 500; }
+
+  .hero-actions {
+    display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+    animation: heroIn 1s ease 0.5s both;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--ngadhu-red), var(--ngadhu-red-dark));
+    color: white;
+    padding: 0.8rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s;
+    border: 1px solid transparent;
+    box-shadow: 0 4px 20px rgba(192, 57, 43, 0.3);
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(192, 57, 43, 0.5);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: white;
+    padding: 0.8rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.3s;
+    border: 1px solid rgba(255,255,255,0.2);
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+
+  .btn-secondary:hover {
+    background: rgba(255,255,255,0.07);
+    border-color: rgba(255,255,255,0.4);
+    transform: translateY(-2px);
+  }
+
+  /* ===== STATS BAR ===== */
+  .stats-bar {
+    position: relative; z-index: 2;
+    max-width: 900px; margin: 4rem auto 0;
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    background: rgba(22, 27, 34, 0.8);
+    border: 1px solid rgba(192, 57, 43, 0.2);
+    border-radius: 16px;
+    overflow: hidden;
+    animation: heroIn 1s ease 0.6s both;
+    backdrop-filter: blur(10px);
+  }
+
+  .stat-item {
+    padding: 1.5rem;
+    text-align: center;
+    border-right: 1px solid rgba(192, 57, 43, 0.15);
+  }
+
+  .stat-item:last-child { border-right: none; }
+
+  .stat-number {
+    font-family: var(--font-display);
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: white;
+    display: block;
+  }
+
+  .stat-number span { color: var(--ngadhu-red-light); }
+  .stat-label { font-size: 0.8rem; color: var(--ngadhu-gray); margin-top: 4px; letter-spacing: 0.05em; }
+
+  /* ===== HERO SCROLL ===== */
+  .scroll-indicator {
+    position: absolute; bottom: 2rem; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    opacity: 0.5;
+    animation: float 3s ease infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-8px); }
+  }
+
+  .scroll-indicator span { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ngadhu-gray); }
+
+  /* ===== SECTIONS ===== */
+  .section { padding: 6rem 2rem; }
+  .section-inner { max-width: 1200px; margin: 0 auto; }
+
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--ngadhu-red-light);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+
+  .section-desc {
+    color: var(--ngadhu-gray);
+    max-width: 550px;
+    line-height: 1.7;
+    font-size: 0.95rem;
+  }
+
+  /* ===== DIVIDER ===== */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(192,57,43,0.4), transparent);
+    margin: 0 2rem;
+  }
+
+  /* ===== DATASET SECTION ===== */
+  .datasets-bg {
+    background: linear-gradient(180deg, var(--ngadhu-dark) 0%, var(--ngadhu-dark2) 100%);
+  }
+
+  .datasets-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 3rem; flex-wrap: wrap; gap: 1rem;
+  }
+
+  .view-all {
+    color: var(--ngadhu-red-light);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex; align-items: center; gap: 6px;
+    transition: gap 0.2s;
+  }
+
+  .view-all:hover { gap: 10px; }
+
+  .filter-tabs {
+    display: flex; gap: 0.5rem; flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+
+  .filter-tab {
+    padding: 0.4rem 1rem;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--ngadhu-gray);
+    background: transparent;
+    transition: all 0.2s;
+    font-family: var(--font-body);
+  }
+
+  .filter-tab.active, .filter-tab:hover {
+    background: var(--ngadhu-red);
+    color: white;
+    border-color: var(--ngadhu-red);
+  }
+
+  .datasets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .dataset-card {
+    background: var(--ngadhu-dark3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .dataset-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--ngadhu-red), var(--ngadhu-gold));
+    transform: scaleX(0);
+    transition: transform 0.3s;
+    transform-origin: left;
+  }
+
+  .dataset-card:hover {
+    border-color: rgba(192, 57, 43, 0.3);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+  }
+
+  .dataset-card:hover::before { transform: scaleX(1); }
+
+  .dataset-meta {
+    display: flex; gap: 0.5rem; align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .tag {
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .tag-numerik { background: rgba(46, 160, 67, 0.2); color: #3fb950; }
+  .tag-spasial { background: rgba(212, 168, 67, 0.2); color: var(--ngadhu-gold); }
+  .tag-non-numerik { background: rgba(139, 148, 158, 0.2); color: var(--ngadhu-gray); }
+  .tag-sektor {
+    background: rgba(192, 57, 43, 0.15);
+    color: var(--ngadhu-red-light);
+    border: 1px solid rgba(192, 57, 43, 0.2);
+  }
+
+  .dataset-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 0.8rem;
+    color: white;
+  }
+
+  .dataset-org {
+    font-size: 0.78rem;
+    color: var(--ngadhu-gray);
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  .dataset-footer {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .dataset-date { font-size: 0.75rem; color: var(--ngadhu-gray); font-family: var(--font-mono); }
+  .dataset-dl { font-size: 0.75rem; color: var(--ngadhu-gray); display: flex; align-items: center; gap: 4px; }
+
+  /* ===== STATISTIK UTAMA ===== */
+  .stats-section {
+    background: var(--ngadhu-dark2);
+    padding: 6rem 2rem;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .stat-card {
+    background: var(--ngadhu-dark3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 1.8rem;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--ngadhu-red), var(--ngadhu-gold));
+  }
+
+  .stat-card:hover { transform: translateY(-3px); border-color: rgba(192,57,43,0.25); }
+
+  .stat-card-icon {
+    width: 44px; height: 44px;
+    background: rgba(192, 57, 43, 0.15);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .stat-card-value {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+
+  .stat-card-value sup { font-size: 1rem; color: var(--ngadhu-red-light); }
+
+  .stat-card-label {
+    font-size: 0.82rem;
+    color: var(--ngadhu-gray);
+    line-height: 1.4;
+  }
+
+  .stat-card-period {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--ngadhu-gray);
+    opacity: 0.6;
+    margin-top: 0.5rem;
+  }
+
+  /* ===== URUSAN / PILAR ===== */
+  .urusan-section { background: var(--ngadhu-dark); padding: 6rem 2rem; }
+
+  .urusan-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 3rem;
+  }
+
+  .urusan-card {
+    background: var(--ngadhu-dark3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .urusan-card:hover {
+    background: rgba(192, 57, 43, 0.1);
+    border-color: rgba(192, 57, 43, 0.3);
+    transform: translateY(-3px);
+  }
+
+  .urusan-icon {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 0.8rem;
+  }
+
+  .urusan-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 0.3rem;
+  }
+
+  .urusan-count {
+    font-size: 0.75rem;
+    color: var(--ngadhu-gray);
+    font-family: var(--font-mono);
+  }
+
+  /* ===== SPM MAP ===== */
+  .spm-section {
+    background: var(--ngadhu-dark2);
+    padding: 6rem 2rem;
+  }
+
+  .spm-inner {
+    display: grid; grid-template-columns: 1fr 400px; gap: 3rem;
+    margin-top: 3rem;
+  }
+
+  .spm-map-container {
+    background: var(--ngadhu-dark3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    overflow: hidden;
+    min-height: 400px;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .spm-map-placeholder {
+    text-align: center;
+    padding: 3rem;
+  }
+
+  .spm-map-placeholder .map-icon { font-size: 4rem; margin-bottom: 1rem; opacity: 0.3; }
+  .spm-map-placeholder p { color: var(--ngadhu-gray); font-size: 0.9rem; }
+
+  .spm-filter-panel {
+    display: flex; flex-direction: column; gap: 1rem;
+  }
+
+  .filter-group { display: flex; flex-direction: column; gap: 0.5rem; }
+  .filter-label { font-size: 0.78rem; color: var(--ngadhu-gray); letter-spacing: 0.05em; text-transform: uppercase; }
+
+  .filter-select {
+    background: var(--ngadhu-dark3);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: white;
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%238B949E' stroke-width='1.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+  }
+
+  .filter-select:focus { border-color: var(--ngadhu-red); }
+
+  .btn-apply {
+    background: var(--ngadhu-red);
+    color: white;
+    border: none;
+    padding: 0.8rem;
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 0.5rem;
+  }
+
+  .btn-apply:hover { background: var(--ngadhu-red-dark); transform: translateY(-1px); }
+
+  /* ===== BPS INDICATORS ===== */
+  .bps-section { background: var(--ngadhu-dark); padding: 6rem 2rem; }
+
+  .indicators-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-top: 3rem;
+  }
+
+  .indicator-card {
+    background: var(--ngadhu-dark3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 1.2rem 1.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1rem;
+    transition: all 0.2s;
+  }
+
+  .indicator-card:hover { border-color: rgba(192,57,43,0.25); background: rgba(192,57,43,0.05); }
+
+  .indicator-info { flex: 1; }
+  .indicator-name { font-size: 0.82rem; color: var(--ngadhu-gray); margin-bottom: 0.3rem; line-height: 1.3; }
+  .indicator-source { font-size: 0.7rem; color: var(--ngadhu-gray); opacity: 0.6; font-family: var(--font-mono); }
+
+  .indicator-value {
+    text-align: right;
+  }
+
+  .indicator-number {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: white;
+    display: block;
+    line-height: 1;
+  }
+
+  .indicator-unit { font-size: 0.7rem; color: var(--ngadhu-gray); }
+  .indicator-year {
+    font-size: 0.65rem;
+    color: var(--ngadhu-red-light);
+    font-family: var(--font-mono);
+    background: rgba(192,57,43,0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-top: 4px;
+  }
+
+  /* ===== BERITA ===== */
+  .berita-section { background: var(--ngadhu-dark2); padding: 6rem 2rem; }
+
+  .berita-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .berita-featured {
+    background: var(--ngadhu-dark3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .berita-featured:hover { transform: translateY(-4px); box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+
+  .berita-img {
+    height: 220px;
+    background: linear-gradient(135deg, rgba(192,57,43,0.4), rgba(212,168,67,0.3));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .berita-img-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(0deg, rgba(33,38,45,0.9) 0%, transparent 60%);
+  }
+
+  .berita-content { padding: 1.5rem; }
+  .berita-cat {
+    font-size: 0.72rem;
+    color: var(--ngadhu-red-light);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .berita-title { font-weight: 700; font-size: 1.05rem; line-height: 1.4; margin-bottom: 0.7rem; }
+  .berita-excerpt { font-size: 0.84rem; color: var(--ngadhu-gray); line-height: 1.6; margin-bottom: 1rem; }
+  .berita-date { font-size: 0.75rem; color: var(--ngadhu-gray); font-family: var(--font-mono); }
+
+  .berita-list { display: flex; flex-direction: column; gap: 1rem; }
+
+  .berita-item {
+    background: var(--ngadhu-dark3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 1.2rem;
+    transition: all 0.2s;
+    cursor: pointer;
+    display: flex; gap: 1rem;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .berita-item:hover { border-color: rgba(192,57,43,0.25); transform: translateX(4px); }
+  .berita-item-num {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 900;
+    color: rgba(192,57,43,0.2);
+    line-height: 1;
+    flex-shrink: 0;
+    width: 36px;
+  }
+
+  .berita-item-title { font-size: 0.85rem; font-weight: 600; line-height: 1.4; margin-bottom: 0.3rem; }
+  .berita-item-date { font-size: 0.73rem; color: var(--ngadhu-gray); font-family: var(--font-mono); }
+
+  /* ===== PRODUK HUKUM ===== */
+  .hukum-section { background: var(--ngadhu-dark); padding: 6rem 2rem; }
+
+  .hukum-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+    margin-top: 3rem;
+  }
+
+  .hukum-card {
+    background: var(--ngadhu-dark3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 1.3rem;
+    transition: all 0.2s;
+    cursor: pointer;
+    display: flex; gap: 1rem; align-items: flex-start;
+  }
+
+  .hukum-card:hover { border-color: rgba(192,57,43,0.25); }
+
+  .hukum-icon {
+    width: 38px; height: 38px;
+    background: rgba(192,57,43,0.12);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 1.1rem;
+  }
+
+  .hukum-title { font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem; line-height: 1.3; }
+  .hukum-meta { font-size: 0.72rem; color: var(--ngadhu-gray); font-family: var(--font-mono); }
+
+  /* ===== WHY USE ===== */
+  .why-section {
+    background: linear-gradient(135deg, var(--ngadhu-dark2) 0%, var(--ngadhu-dark) 100%);
+    padding: 6rem 2rem;
+  }
+
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+
+  .why-item { text-align: center; }
+
+  .why-icon-wrap {
+    width: 60px; height: 60px;
+    border-radius: 16px;
+    background: rgba(192,57,43,0.12);
+    border: 1px solid rgba(192,57,43,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem;
+    margin: 0 auto 1.2rem;
+    transition: all 0.3s;
+  }
+
+  .why-item:hover .why-icon-wrap {
+    background: rgba(192,57,43,0.25);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(192,57,43,0.2);
+  }
+
+  .why-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem; }
+  .why-desc { font-size: 0.82rem; color: var(--ngadhu-gray); line-height: 1.6; }
+
+  /* ===== MITRA ===== */
+  .mitra-section { background: var(--ngadhu-dark2); padding: 3rem 2rem; }
+
+  .mitra-row {
+    display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center; align-items: center;
+    margin-top: 2rem;
+  }
+
+  .mitra-item {
+    background: var(--ngadhu-dark3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 0.8rem 1.5rem;
+    font-size: 0.8rem;
+    color: var(--ngadhu-gray);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+  }
+
+  .mitra-item:hover { border-color: rgba(192,57,43,0.3); color: white; }
+
+  /* ===== FOOTER ===== */
+  .footer {
+    background: var(--ngadhu-dark);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 4rem 2rem 2rem;
+  }
+
+  .footer-inner { max-width: 1200px; margin: 0 auto; }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 3rem;
+    margin-bottom: 3rem;
+  }
+
+  .footer-brand .brand-name {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    font-weight: 900;
+    margin-bottom: 0.5rem;
+  }
+
+  .footer-brand .brand-name span { color: var(--ngadhu-red-light); }
+
+  .footer-brand .brand-full {
+    font-size: 0.8rem;
+    color: var(--ngadhu-gray);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  .footer-brand .address {
+    font-size: 0.78rem;
+    color: var(--ngadhu-gray);
+    line-height: 1.7;
+    opacity: 0.7;
+  }
+
+  .footer-col-title { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 1rem; color: white; }
+
+  .footer-links { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+  .footer-links a { color: var(--ngadhu-gray); text-decoration: none; font-size: 0.83rem; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--ngadhu-red-light); }
+
+  .footer-stats {
+    background: var(--ngadhu-dark3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 1rem;
+    margin-top: 1rem;
+  }
+
+  .footer-stat-row { display: flex; justify-content: space-between; font-size: 0.78rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .footer-stat-row:last-child { border-bottom: none; }
+  .footer-stat-row span:first-child { color: var(--ngadhu-gray); }
+  .footer-stat-row span:last-child { color: white; font-weight: 600; font-family: var(--font-mono); }
+
+  .footer-bottom {
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.78rem;
+    color: var(--ngadhu-gray);
+    flex-wrap: wrap; gap: 1rem;
+  }
+
+  .footer-bottom a { color: var(--ngadhu-gray); text-decoration: none; }
+  .footer-bottom a:hover { color: var(--ngadhu-red-light); }
+
+  /* ===== HERO NGADHU EMBLEM ===== */
+  .hero-emblem {
+    position: absolute;
+    right: 5%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 400px;
+    height: 400px;
+    opacity: 0.07;
+    animation: rotateSlow 30s linear infinite;
+    pointer-events: none;
+  }
+
+  @keyframes rotateSlow {
+    from { transform: translateY(-50%) rotate(0deg); }
+    to { transform: translateY(-50%) rotate(360deg); }
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    .nav-menu { display: none; }
+    .hero-title { font-size: 3rem; }
+    .stats-bar { grid-template-columns: 1fr; }
+    .stat-item { border-right: none; border-bottom: 1px solid rgba(192,57,43,0.15); }
+    .spm-inner { grid-template-columns: 1fr; }
+    .berita-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .hero-emblem { display: none; }
+  }
+
+  @media (max-width: 480px) {
+    .footer-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ===== ANIMATE ON SCROLL ===== */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease;
+  }
+
+  .fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ===== NAVBAR TOGGLE ===== */
+  .menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    flex-direction: column;
+    gap: 5px;
+    padding: 5px;
+  }
+
+  .menu-toggle span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: white;
+    border-radius: 1px;
+    transition: all 0.3s;
+  }
+
+  @media (max-width: 768px) {
+    .menu-toggle { display: flex; }
+  }
+
+  /* ── INDEX PAGE EXTRA ANIMATIONS ── */
+  .hero-badge { animation: float-badge 3s ease-in-out infinite; }
+  @keyframes float-badge { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+
+  .hero-title .line2 {
+    background: linear-gradient(90deg,#E74C3C 0%,#D4A843 35%,#fff 50%,#D4A843 65%,#E74C3C 100%);
+    background-size:250% auto;
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    animation:hero-shimmer 5s linear infinite;
+  }
+  @keyframes hero-shimmer{0%{background-position:-250% center}100%{background-position:250% center}}
+
+  .hero-section { overflow:hidden; }
+  .hero-title { animation: hero-title-in 0.8s cubic-bezier(.22,1,.36,1) both .1s; }
+  @keyframes hero-title-in { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:none} }
+  .hero-subtitle { animation: hero-title-in 0.7s cubic-bezier(.22,1,.36,1) both .3s; }
+  .hero-actions  { animation: hero-title-in 0.7s cubic-bezier(.22,1,.36,1) both .5s; }
+  .hero-badge    { animation: hero-badge-in .6s cubic-bezier(.34,1.56,.64,1) both, float-badge 3.5s ease-in-out 1s infinite; }
+  @keyframes hero-badge-in { from{opacity:0;transform:scale(.8) translateY(-10px)} to{opacity:1;transform:translateY(0)} }
+
+  .stats-bar > * { animation: stats-bar-in .5s cubic-bezier(.22,1,.36,1) both; }
+  .stats-bar > *:nth-child(1){animation-delay:.6s}
+  .stats-bar > *:nth-child(2){animation-delay:.72s}
+  .stats-bar > *:nth-child(3){animation-delay:.84s}
+  .stats-bar > *:nth-child(4){animation-delay:.96s}
+  @keyframes stats-bar-in { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:none} }
+
+  .nav-logo { animation: logo-spin 0s linear; transition: transform .6s cubic-bezier(.34,1.56,.64,1); }
+  .nav-logo:hover { transform: rotate(15deg) scale(1.12); }
+
+  /* Card hover */
+  .dataset-card { transition: transform .25s ease, border-color .25s, box-shadow .25s; }
+  .dataset-card:hover { transform:translateY(-5px); box-shadow:0 12px 35px rgba(192,57,43,.2); }
+  .stat-card { transition: transform .25s ease, border-color .25s, box-shadow .25s; }
+  .stat-card:hover { transform:translateY(-4px); box-shadow:0 8px 28px rgba(192,57,43,.15); }
+  .urusan-card { transition: transform .25s ease, border-color .25s, box-shadow .25s; }
+  .urusan-card:hover { transform:translateY(-4px) scale(1.02); }
+
+  /* Section separator line animate */
+  .section-separator { transform-origin:left; transition:transform 1.2s ease; transform:scaleX(0); }
+  .section-separator.in { transform:scaleX(1); }
+
+  /* Scroll-reveal defaults */
+  .fade-up { opacity:0; transform:translateY(26px); transition:opacity .6s ease, transform .6s cubic-bezier(.22,1,.36,1); }
+  .fade-up.visible { opacity:1; transform:none; }
+
+  /* Grid children stagger */
+  .datasets-grid .dataset-card,
+  .stats-grid .stat-card,
+  .urusan-grid .urusan-card {
+    opacity:0; transform:translateY(22px);
+    transition:opacity .55s ease, transform .55s cubic-bezier(.22,1,.36,1),
+               border-color .25s, box-shadow .25s, transform .25s;
+  }
+  .datasets-grid .dataset-card.visible,
+  .stats-grid .stat-card.visible,
+  .urusan-grid .urusan-card.visible { opacity:1; transform:none; }
+
+  /* Button press */
+  .btn-primary:active, .hero-actions a:active { transform:scale(.97); }
+  .btn-primary { transition: background .2s, transform .15s, box-shadow .2s; }
+  .btn-primary:hover { box-shadow:0 6px 22px rgba(192,57,43,.4); }
+
+  /* Footer links */
+  footer a { transition: color .2s; position:relative; }
+
+  /* Ripple overlay */
+  .btn-primary { position:relative; overflow:hidden; }
+
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <a href="#" class="nav-brand">
+    <div class="nav-logo">N</div>
+    <span class="nav-title">NGADHU<span></span></span>
+  </a>
+  <ul class="nav-menu">
+    <li><a href="#dataset">Dataset</a></li>
+    <li><a href="#urusan">Urusan</a></li>
+    <li><a href="#statistik">Statistik</a></li>
+    <li><a href="#spm">Peta SPM</a></li>
+    <li><a href="#berita">Berita</a></li>
+    <li><a href="#hukum">Produk Hukum</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="login.html" class="btn-login">Masuk</a>
+    <button class="menu-toggle" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+
+  <!-- Decorative SVG emblem -->
+  <svg class="hero-emblem" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="100" cy="100" r="95" stroke="white" stroke-width="1"/>
+    <circle cx="100" cy="100" r="75" stroke="white" stroke-width="0.5"/>
+    <circle cx="100" cy="100" r="55" stroke="white" stroke-width="1"/>
+    <line x1="100" y1="5" x2="100" y2="195" stroke="white" stroke-width="0.5"/>
+    <line x1="5" y1="100" x2="195" y2="100" stroke="white" stroke-width="0.5"/>
+    <line x1="33" y1="33" x2="167" y2="167" stroke="white" stroke-width="0.3"/>
+    <line x1="167" y1="33" x2="33" y2="167" stroke="white" stroke-width="0.3"/>
+    <polygon points="100,10 120,50 160,50 128,75 140,115 100,90 60,115 72,75 40,50 80,50" stroke="white" stroke-width="0.5" fill="none"/>
+    <text x="100" y="107" text-anchor="middle" font-size="14" fill="white" font-family="serif" font-weight="bold">NGADA</text>
+  </svg>
+
+  <div class="hero-content">
+    <div class="hero-badge ng-float">Portal Satu Data Kabupaten Ngada</div>
+    <h1 class="hero-title">
+      <span class="line1">NGADHU</span>
+      <span class="line2 ng-shimmer-text">Gerbang Data Ngada</span>
+    </h1>
+    <p class="hero-subtitle">
+      <strong>Ngada Gerbang Akses Data Handal dan Utama</strong> — Platform data terpadu Pemerintah Kabupaten Ngada untuk mendukung pembangunan berbasis data yang transparan dan akuntabel.
+    </p>
+    <div class="hero-actions">
+      <a href="#dataset" class="btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        Jelajahi Dataset
+      </a>
+      <a href="dashboard.html" class="btn-secondary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Buka Dashboard
+      </a>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+      <div class="stat-item">
+        <span class="stat-number" id="counter1">0</span>
+        <div class="stat-label">Total Dataset</div>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number" id="counter2">0</span>
+        <div class="stat-label">Organisasi Perangkat Daerah</div>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number"><span>100</span>%</span>
+        <div class="stat-label">Data Terbuka & Akses Publik</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-indicator">
+    <span>Scroll</span>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DATASET TERBARU -->
+<section class="section datasets-bg" id="dataset">
+  <div class="section-inner">
+    <div class="datasets-header">
+      <div>
+        <p class="section-label">// Dataset</p>
+        <h2 class="section-title ng-reveal-up">Dataset Sektoral<br>Terbaru</h2>
+        <p class="section-desc ng-reveal-up">Data terkini dari berbagai sektor pemerintahan Kabupaten Ngada — dari kesehatan, pendidikan, ekonomi hingga infrastruktur.</p>
+      </div>
+      <a href="dataset.html" class="view-all">
+        Lihat Semua Dataset
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+
+    <div class="filter-tabs">
+      <button class="filter-tab active">Semua</button>
+      <button class="filter-tab">Pendidikan</button>
+      <button class="filter-tab">Kesehatan</button>
+      <button class="filter-tab">Ekonomi</button>
+      <button class="filter-tab">Infrastruktur</button>
+      <button class="filter-tab">Sosial</button>
+      <button class="filter-tab">Pertanian</button>
+      <button class="filter-tab">Pariwisata</button>
+    </div>
+
+    <div class="datasets-grid">
+      <a href="#" class="dataset-card ng-reveal-up ng-ripple">
+        <div class="dataset-meta">
+          <span class="tag tag-numerik">Numerik</span>
+          <span class="tag tag-sektor">Pendidikan</span>
+        </div>
+        <div class="dataset-title">Angka Partisipasi Murni (APM) SD, SMP, SMA Kabupaten Ngada 2024</div>
+        <div class="dataset-org">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+          Dinas Pendidikan Kab. Ngada
+        </div>
+        <div class="dataset-footer">
+          <span class="dataset-date">2024</span>
+          <span class="dataset-dl">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            142 Unduhan
+          </span>
+        </div>
+      </a>
+
+      <a href="#" class="dataset-card ng-reveal-up ng-ripple">
+        <div class="dataset-meta">
+          <span class="tag tag-numerik">Numerik</span>
+          <span class="tag tag-sektor">Kesehatan</span>
+        </div>
+        <div class="dataset-title">Jumlah Balita Stunting per Kecamatan Kabupaten Ngada 2024</div>
+        <div class="dataset-org">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+          Dinas Kesehatan Kab. Ngada
+        </div>
+        <div class="dataset-footer">
+          <span class="dataset-date">2024</span>
+          <span class="dataset-dl">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            98 Unduhan
+          </span>
+        </div>
+      </a>
+
+      <a href="#" class="dataset-card ng-reveal-up ng-ripple">
+        <div class="dataset-meta">
+          <span class="tag tag-spasial">Spasial</span>
+          <span class="tag tag-sektor">Infrastruktur</span>
+        </div>
+        <div class="dataset-title">Data Jaringan Jalan Kabupaten dan Kondisi Jalan Ngada 2024</div>
+        <div class="dataset-org">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+          Dinas PUPR Kab. Ngada
+        </div>
+        <div class="dataset-footer">
+          <span class="dataset-date">2024</span>
+          <span class="dataset-dl">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            67 Unduhan
+          </span>
+        </div>
+      </a>
+
+      <a href="#" class="dataset-card ng-reveal-up ng-ripple">
+        <div class="dataset-meta">
+          <span class="tag tag-numerik">Numerik</span>
+          <span class="tag tag-sektor">Ekonomi</span>
+        </div>
+        <div class="dataset-title">PDRB Kabupaten Ngada Atas Dasar Harga Berlaku 2020–2024</div>
+        <div class="dataset-org">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+          BPS Kabupaten Ngada
+        </div>
+        <div class="dataset-footer">
+          <span class="dataset-date">2024</span>
+          <span class="dataset-dl">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            203 Unduhan
+          </span>
+        </div>
+      </a>
+
+      <a href="#" class="dataset-card ng-reveal-up ng-ripple">
+        <div class="dataset-meta">
+          <span class="tag tag-non-numerik">Non-Numerik</span>
+          <span class="tag tag-sektor">Sosial</span>
+        </div>
+        <div class="dataset-title">Data Penerima Bantuan Sosial PKH dan BPNT Kabupaten Ngada 2024</div>
+        <div class="dataset-org">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+          Dinas Sosial Kab. Ngada
+        </div>
+        <div class="dataset-footer">
+          <span class="dataset-date">2024</span>
+          <span class="dataset-dl">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            55 Unduhan
+          </span>
+        </div>
+      </a>
+
+      <a href="#" class="dataset-card ng-reveal-up ng-ripple">
+        <div class="dataset-meta">
+          <span class="tag tag-numerik">Numerik</span>
+          <span class="tag tag-sektor">Pertanian</span>
+        </div>
+        <div class="dataset-title">Produksi Tanaman Pangan Utama Kabupaten Ngada (Padi, Jagung, Kedelai) 2024</div>
+        <div class="dataset-org">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+          Dinas Pertanian Kab. Ngada
+        </div>
+        <div class="dataset-footer">
+          <span class="dataset-date">2024</span>
+          <span class="dataset-dl">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            88 Unduhan
+          </span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- STATISTIK UTAMA -->
+<section class="stats-section" id="statistik">
+  <div class="section-inner">
+    <p class="section-label">// Indikator Kunci</p>
+    <h2 class="section-title ng-reveal-up">Statistik Utama<br>Kabupaten Ngada</h2>
+    <p class="section-desc ng-reveal-up">Indikator kunci pembangunan daerah Kabupaten Ngada berdasarkan data resmi BPS dan OPD terkait.</p>
+
+    <div class="stats-grid">
+      <div class="stat-card ng-reveal-up ng-tilt ng-spotlight">
+        <div class="stat-card-icon">👥</div>
+        <div class="stat-card-value ng-counter">166<sup>rb</sup></div>
+        <div class="stat-card-label">Jumlah Penduduk</div>
+        <div class="stat-card-period">Proyeksi 2024</div>
+      </div>
+      <div class="stat-card ng-reveal-up ng-tilt ng-spotlight">
+        <div class="stat-card-icon">📈</div>
+        <div class="stat-card-value ng-counter">68.7<sup>2</sup></div>
+        <div class="stat-card-label">Indeks Pembangunan Manusia (IPM)</div>
+        <div class="stat-card-period">Tahun 2023</div>
+      </div>
+      <div class="stat-card ng-reveal-up ng-tilt ng-spotlight">
+        <div class="stat-card-icon">💰</div>
+        <div class="stat-card-value ng-counter">4.2<sup>%</sup></div>
+        <div class="stat-card-label">Pertumbuhan Ekonomi</div>
+        <div class="stat-card-period">Tahun 2024</div>
+      </div>
+      <div class="stat-card ng-reveal-up ng-tilt ng-spotlight">
+        <div class="stat-card-icon">🏫</div>
+        <div class="stat-card-value ng-counter">97.8<sup>%</sup></div>
+        <div class="stat-card-label">Angka Partisipasi Kasar SD</div>
+        <div class="stat-card-period">Tahun 2024</div>
+      </div>
+      <div class="stat-card ng-reveal-up ng-tilt ng-spotlight">
+        <div class="stat-card-icon">🏥</div>
+        <div class="stat-card-value ng-counter">14.2<sup>%</sup></div>
+        <div class="stat-card-label">Prevalensi Stunting</div>
+        <div class="stat-card-period">Tahun 2024</div>
+      </div>
+      <div class="stat-card ng-reveal-up ng-tilt ng-spotlight">
+        <div class="stat-card-icon">📉</div>
+        <div class="stat-card-value ng-counter">12.6<sup>%</sup></div>
+        <div class="stat-card-label">Tingkat Kemiskinan</div>
+        <div class="stat-card-period">Maret 2024</div>
+      </div>
+      <div class="stat-card ng-reveal-up ng-tilt ng-spotlight">
+        <div class="stat-card-icon">🌾</div>
+        <div class="stat-card-value ng-counter">28.4<sup>%</sup></div>
+        <div class="stat-card-label">Kontribusi Sektor Pertanian thd PDRB</div>
+        <div class="stat-card-period">Tahun 2024</div>
+      </div>
+      <div class="stat-card ng-reveal-up ng-tilt ng-spotlight">
+        <div class="stat-card-icon">🗺️</div>
+        <div class="stat-card-value ng-counter">1.645<sup>km²</sup></div>
+        <div class="stat-card-label">Luas Wilayah</div>
+        <div class="stat-card-period">Kab. Ngada</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- URUSAN -->
+<section class="urusan-section" id="urusan">
+  <div class="section-inner">
+    <div class="datasets-header">
+      <div>
+        <p class="section-label">// Kategori</p>
+        <h2 class="section-title ng-reveal-up">Urusan &<br>Organisasi</h2>
+        <p class="section-desc ng-reveal-up">Jelajahi dataset berdasarkan urusan pemerintahan dan organisasi perangkat daerah Kabupaten Ngada.</p>
+      </div>
+      <a href="urusan.html" class="view-all">
+        Lihat Semua Urusan
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+
+    <div class="urusan-grid">
+      <a href="#" class="urusan-card ng-reveal-scale">
+        <span class="urusan-icon">🎓</span>
+        <div class="urusan-name">Pendidikan</div>
+        <div class="urusan-count">24 Dataset</div>
+      </a>
+      <a href="#" class="urusan-card ng-reveal-scale">
+        <span class="urusan-icon">🏥</span>
+        <div class="urusan-name">Kesehatan</div>
+        <div class="urusan-count">31 Dataset</div>
+      </a>
+      <a href="#" class="urusan-card ng-reveal-scale">
+        <span class="urusan-icon">🏗️</span>
+        <div class="urusan-name">Pekerjaan Umum</div>
+        <div class="urusan-count">18 Dataset</div>
+      </a>
+      <a href="#" class="urusan-card ng-reveal-scale">
+        <span class="urusan-icon">🏘️</span>
+        <div class="urusan-name">Perumahan</div>
+        <div class="urusan-count">12 Dataset</div>
+      </a>
+      <a href="#" class="urusan-card ng-reveal-scale">
+        <span class="urusan-icon">🛡️</span>
+        <div class="urusan-name">Trantibumlinmas</div>
+        <div class="urusan-count">9 Dataset</div>
+      </a>
+      <a href="#" class="urusan-card ng-reveal-scale">
+        <span class="urusan-icon">🤝</span>
+        <div class="urusan-name">Sosial</div>
+        <div class="urusan-count">15 Dataset</div>
+      </a>
+      <a href="#" class="urusan-card ng-reveal-scale">
+        <span class="urusan-icon">💼</span>
+        <div class="urusan-name">Tenaga Kerja</div>
+        <div class="urusan-count">11 Dataset</div>
+      </a>
+      <a href="#" class="urusan-card ng-reveal-scale">
+        <span class="urusan-icon">🌾</span>
+        <div class="urusan-name">Pertanian</div>
+        <div class="urusan-count">27 Dataset</div>
+      </a>
+      <a href="#" class="urusan-card ng-reveal-scale">
+        <span class="urusan-icon">🌊</span>
+        <div class="urusan-name">Kelautan & Perikanan</div>
+        <div class="urusan-count">14 Dataset</div>
+      </a>
+      <a href="#" class="urusan-card ng-reveal-scale">
+        <span class="urusan-icon">🏛️</span>
+        <div class="urusan-name">Perindustrian</div>
+        <div class="urusan-count">8 Dataset</div>
+      </a>
+      <a href="#" class="urusan-card ng-reveal-scale">
+        <span class="urusan-icon">🗺️</span>
+        <div class="urusan-name">Pariwisata & Budaya</div>
+        <div class="urusan-count">16 Dataset</div>
+      </a>
+      <a href="#" class="urusan-card ng-reveal-scale">
+        <span class="urusan-icon">⚡</span>
+        <div class="urusan-name">Energi</div>
+        <div class="urusan-count">6 Dataset</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SPM MAP -->
+<section class="spm-section" id="spm">
+  <div class="section-inner">
+    <p class="section-label">// Peta Interaktif</p>
+    <h2 class="section-title ng-reveal-up">Peta Standar Pelayanan<br>Minimal Ngada</h2>
+    <p class="section-desc ng-reveal-up">Eksplorasi capaian SPM per kecamatan di Kabupaten Ngada. Gunakan filter untuk melihat kinerja layanan dasar di setiap wilayah.</p>
+
+    <div class="spm-inner">
+      <div class="spm-map-container">
+        <div class="spm-map-placeholder">
+          <div class="map-icon">🗺️</div>
+          <p>Peta Interaktif Kecamatan Kabupaten Ngada<br><small>Pilih filter urusan untuk menampilkan data SPM</small></p>
+        </div>
+      </div>
+
+      <div class="spm-filter-panel">
+        <div class="filter-group">
+          <label class="filter-label">Kewenangan</label>
+          <select class="filter-select">
+            <option>Pilih Kewenangan</option>
+            <option>Kabupaten/Kota</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Urusan</label>
+          <select class="filter-select">
+            <option>Pilih Urusan</option>
+            <option>Pendidikan</option>
+            <option>Kesehatan</option>
+            <option>Pekerjaan Umum</option>
+            <option>Perumahan Rakyat</option>
+            <option>Trantibumlinmas</option>
+            <option>Sosial</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Jenis Layanan</label>
+          <select class="filter-select">
+            <option>Pilih Jenis Layanan</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Periode</label>
+          <select class="filter-select">
+            <option>Pilih Periode</option>
+            <option>2024</option>
+            <option>2023</option>
+            <option>2022</option>
+          </select>
+        </div>
+        <button class="btn-apply">Terapkan Filter</button>
+
+        <div style="margin-top: 1.5rem; background: var(--ngadhu-dark3); border-radius: 10px; padding: 1.2rem; border: 1px solid rgba(255,255,255,0.06);">
+          <div style="font-size: 0.78rem; color: var(--ngadhu-gray); margin-bottom: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em;">Kecamatan di Ngada</div>
+          <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+            <div style="font-size: 0.82rem; padding: 0.4rem 0.7rem; background: rgba(192,57,43,0.1); border-radius: 5px; display: flex; justify-content: space-between;">
+              <span>Bajawa</span><span style="color:var(--ngadhu-gold); font-family:var(--font-mono); font-size:0.75rem;">Ibu Kota</span>
+            </div>
+            <div style="font-size: 0.82rem; padding: 0.4rem 0.7rem; color: var(--ngadhu-gray);">Bajawa Utara</div>
+            <div style="font-size: 0.82rem; padding: 0.4rem 0.7rem; color: var(--ngadhu-gray);">Golewa</div>
+            <div style="font-size: 0.82rem; padding: 0.4rem 0.7rem; color: var(--ngadhu-gray);">Golewa Barat</div>
+            <div style="font-size: 0.82rem; padding: 0.4rem 0.7rem; color: var(--ngadhu-gray);">Golewa Selatan</div>
+            <div style="font-size: 0.82rem; padding: 0.4rem 0.7rem; color: var(--ngadhu-gray);">Inerie</div>
+            <div style="font-size: 0.82rem; padding: 0.4rem 0.7rem; color: var(--ngadhu-gray);">Jerebuu</div>
+            <div style="font-size: 0.82rem; padding: 0.4rem 0.7rem; color: var(--ngadhu-gray);">Aimere</div>
+            <div style="font-size: 0.82rem; padding: 0.4rem 0.7rem; color: var(--ngadhu-gray);">Riung</div>
+            <div style="font-size: 0.82rem; padding: 0.4rem 0.7rem; color: var(--ngadhu-gray);">Riung Barat</div>
+            <div style="font-size: 0.82rem; padding: 0.4rem 0.7rem; color: var(--ngadhu-gray);">Wolomeze</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- BPS INDICATORS -->
+<section class="bps-section">
+  <div class="section-inner">
+    <div class="datasets-header">
+      <div>
+        <p class="section-label">// Data BPS</p>
+        <h2 class="section-title ng-reveal-up">Indikator Statistik<br>Utama Ngada</h2>
+      </div>
+      <a href="statistik.html" class="view-all">
+        Lihat Semua
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+
+    <div class="indicators-grid">
+      <div class="indicator-card ng-reveal-up">
+        <div class="indicator-info">
+          <div class="indicator-name">Umur Harapan Hidup (UHH)</div>
+          <div class="indicator-source">BPS — Indeks Pembangunan Manusia</div>
+        </div>
+        <div class="indicator-value">
+          <span class="indicator-number">68.9</span>
+          <div class="indicator-unit">Tahun</div>
+          <div class="indicator-year">2023</div>
+        </div>
+      </div>
+      <div class="indicator-card ng-reveal-up">
+        <div class="indicator-info">
+          <div class="indicator-name">Tingkat Partisipasi Angkatan Kerja</div>
+          <div class="indicator-source">BPS, Sakernas Agustus 2024</div>
+        </div>
+        <div class="indicator-value">
+          <span class="indicator-number">73.4</span>
+          <div class="indicator-unit">%</div>
+          <div class="indicator-year">2024</div>
+        </div>
+      </div>
+      <div class="indicator-card ng-reveal-up">
+        <div class="indicator-info">
+          <div class="indicator-name">Jumlah Balita Stunting</div>
+          <div class="indicator-source">Dinas Kesehatan Kab. Ngada</div>
+        </div>
+        <div class="indicator-value">
+          <span class="indicator-number">2.847</span>
+          <div class="indicator-unit">Jiwa</div>
+          <div class="indicator-year">2024</div>
+        </div>
+      </div>
+      <div class="indicator-card ng-reveal-up">
+        <div class="indicator-info">
+          <div class="indicator-name">Indeks Pembangunan Gender (IPG)</div>
+          <div class="indicator-source">BPS Kabupaten Ngada</div>
+        </div>
+        <div class="indicator-value">
+          <span class="indicator-number">91.2</span>
+          <div class="indicator-unit">Indeks</div>
+          <div class="indicator-year">2024</div>
+        </div>
+      </div>
+      <div class="indicator-card ng-reveal-up">
+        <div class="indicator-info">
+          <div class="indicator-name">Angka Melek Huruf ≥15 tahun</div>
+          <div class="indicator-source">BPS, Susenas 2024</div>
+        </div>
+        <div class="indicator-value">
+          <span class="indicator-number">96.8</span>
+          <div class="indicator-unit">%</div>
+          <div class="indicator-year">2024</div>
+        </div>
+      </div>
+      <div class="indicator-card ng-reveal-up">
+        <div class="indicator-info">
+          <div class="indicator-name">Angka Partisipasi Kasar SMP</div>
+          <div class="indicator-source">BPS, Susenas 2024</div>
+        </div>
+        <div class="indicator-value">
+          <span class="indicator-number">89.1</span>
+          <div class="indicator-unit">%</div>
+          <div class="indicator-year">2024</div>
+        </div>
+      </div>
+      <div class="indicator-card ng-reveal-up">
+        <div class="indicator-info">
+          <div class="indicator-name">Pengeluaran Per Kapita / Bulan</div>
+          <div class="indicator-source">BPS, Susenas 2024</div>
+        </div>
+        <div class="indicator-value">
+          <span class="indicator-number">512rb</span>
+          <div class="indicator-unit">Rupiah</div>
+          <div class="indicator-year">2024</div>
+        </div>
+      </div>
+      <div class="indicator-card ng-reveal-up">
+        <div class="indicator-info">
+          <div class="indicator-name">Jumlah Kematian Ibu Melahirkan</div>
+          <div class="indicator-source">Dinas Kesehatan Kab. Ngada</div>
+        </div>
+        <div class="indicator-value">
+          <span class="indicator-number">8</span>
+          <div class="indicator-unit">Jiwa</div>
+          <div class="indicator-year">2024</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- BERITA -->
+<section class="berita-section" id="berita">
+  <div class="section-inner">
+    <div class="datasets-header">
+      <div>
+        <p class="section-label">// Publikasi</p>
+        <h2 class="section-title ng-reveal-up">Berita &<br>Pengumuman</h2>
+      </div>
+      <a href="berita.html" class="view-all">
+        Semua Berita
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+
+    <div class="berita-grid">
+      <a href="#" class="berita-featured">
+        <div class="berita-img">
+          📊
+          <div class="berita-img-overlay"></div>
+        </div>
+        <div class="berita-content">
+          <div class="berita-cat">Workshop · Data Prioritas</div>
+          <div class="berita-title">Workshop Pemutakhiran Data Prioritas 2025 Kabupaten Ngada: Menuju Tata Kelola Data yang Lebih Baik</div>
+          <div class="berita-excerpt">Pemerintah Kabupaten Ngada melalui Dinas Kominfo menyelenggarakan workshop pemutakhiran data prioritas untuk memastikan seluruh OPD menyampaikan data terbaru dan akurat ke portal NGADHU.</div>
+          <div class="berita-date">14 Feb 2025 · 3 min baca</div>
+        </div>
+      </a>
+
+      <div class="berita-list">
+        <a href="#" class="berita-item">
+          <div class="berita-item-num">01</div>
+          <div>
+            <div class="berita-item-title">Peluncuran Portal NGADHU sebagai Terobosan Literasi Data Digital Kabupaten Ngada</div>
+            <div class="berita-item-date">20 Jan 2025 · 4 min baca</div>
+          </div>
+        </a>
+        <a href="#" class="berita-item">
+          <div class="berita-item-num">02</div>
+          <div>
+            <div class="berita-item-title">Pemkab Ngada dan BPS Perkuat Kolaborasi Data Statistik Daerah 2025</div>
+            <div class="berita-item-date">15 Jan 2025 · 3 min baca</div>
+          </div>
+        </a>
+        <a href="#" class="berita-item">
+          <div class="berita-item-num">03</div>
+          <div>
+            <div class="berita-item-title">Pelatihan Pengelolaan Data bagi Operator OPD Se-Kabupaten Ngada</div>
+            <div class="berita-item-date">10 Jan 2025 · 2 min baca</div>
+          </div>
+        </a>
+        <a href="#" class="berita-item">
+          <div class="berita-item-num">04</div>
+          <div>
+            <div class="berita-item-title">Capaian SPM Kabupaten Ngada 2024: Mayoritas Indikator Melampaui Target</div>
+            <div class="berita-item-date">05 Jan 2025 · 5 min baca</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PRODUK HUKUM -->
+<section class="hukum-section" id="hukum">
+  <div class="section-inner">
+    <div class="datasets-header">
+      <div>
+        <p class="section-label">// Regulasi</p>
+        <h2 class="section-title ng-reveal-up">Produk Hukum<br>& Regulasi</h2>
+        <p class="section-desc ng-reveal-up">Peraturan Daerah, SK Bupati, dan dokumen hukum pendukung pengelolaan data Kabupaten Ngada.</p>
+      </div>
+      <a href="hukum.html" class="view-all">
+        Lihat Semua
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+
+    <div class="hukum-grid">
+      <div class="hukum-card">
+        <div class="hukum-icon">📜</div>
+        <div>
+          <div class="hukum-title">Perda No. 4/2023 tentang Penyelenggaraan Sistem Pemerintahan Berbasis Elektronik</div>
+          <div class="hukum-meta">Peraturan Daerah · 2023</div>
+        </div>
+      </div>
+      <div class="hukum-card">
+        <div class="hukum-icon">📋</div>
+        <div>
+          <div class="hukum-title">SK Bupati No. 285/2024 tentang Tim Satu Data Kabupaten Ngada</div>
+          <div class="hukum-meta">Surat Keputusan · 2024</div>
+        </div>
+      </div>
+      <div class="hukum-card">
+        <div class="hukum-icon">📄</div>
+        <div>
+          <div class="hukum-title">Perbup No. 12/2024 tentang Tata Kelola Data dan Informasi Pemerintah Daerah</div>
+          <div class="hukum-meta">Peraturan Bupati · 2024</div>
+        </div>
+      </div>
+      <div class="hukum-card">
+        <div class="hukum-icon">🔖</div>
+        <div>
+          <div class="hukum-title">Instruksi Bupati No. 3/2024 tentang Pemutakhiran Data Prioritas OPD</div>
+          <div class="hukum-meta">Instruksi Bupati · 2024</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- WHY USE -->
+<section class="why-section">
+  <div class="section-inner">
+    <p class="section-label" style="text-align:center">// Mengapa NGADHU?</p>
+    <h2 class="section-title ng-reveal-up" style="text-align:center; margin: 0 auto 1rem;">Data Ngada untuk Semua,<br>Terbuka & Terpercaya</h2>
+    <p class="section-desc ng-reveal-up" style="text-align:center; margin: 0 auto 3rem;">Platform data resmi Kabupaten Ngada yang dirancang untuk mendukung riset, analisis, dan pengambilan keputusan berbasis data.</p>
+
+    <div class="why-grid">
+      <div class="why-item ng-reveal-up">
+        <div class="why-icon-wrap">🔍</div>
+        <div class="why-title">Temukan Data dengan Mudah</div>
+        <div class="why-desc">Sistem pencarian canggih dengan filter sektor, organisasi, dan periode untuk menemukan data yang dibutuhkan.</div>
+      </div>
+      <div class="why-item ng-reveal-up">
+        <div class="why-icon-wrap">⚡</div>
+        <div class="why-title">Akses Data Cepat</div>
+        <div class="why-desc">Unduh dataset dalam berbagai format (CSV, XLSX, JSON) langsung dari platform tanpa registrasi untuk data publik.</div>
+      </div>
+      <div class="why-item ng-reveal-up">
+        <div class="why-icon-wrap">✅</div>
+        <div class="why-title">Data Akurat & Mutakhir</div>
+        <div class="why-desc">Semua data terverifikasi dari sumber resmi OPD dan BPS dengan pembaruan berkala yang terjadwal.</div>
+      </div>
+      <div class="why-item ng-reveal-up">
+        <div class="why-icon-wrap">📊</div>
+        <div class="why-title">Visualisasi Interaktif</div>
+        <div class="why-desc">Grafik, peta, dan dashboard interaktif untuk memahami tren dan pola data Kabupaten Ngada secara visual.</div>
+      </div>
+      <div class="why-item ng-reveal-up">
+        <div class="why-icon-wrap">🔗</div>
+        <div class="why-title">Integrasi & Interoperabilitas</div>
+        <div class="why-desc">API terbuka yang memungkinkan integrasi data NGADHU dengan sistem dan aplikasi lain secara seamless.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MITRA -->
+<section class="mitra-section">
+  <div class="section-inner">
+    <p style="text-align:center; font-size:0.75rem; color:var(--ngadhu-gray); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:1.5rem;">Mitra & Kerjasama</p>
+    <div class="mitra-row">
+      <div class="mitra-item">BPS Kab. Ngada</div>
+      <div class="mitra-item">Kemendagri</div>
+      <div class="mitra-item">Bappenas</div>
+      <div class="mitra-item">Satu Data Indonesia</div>
+      <div class="mitra-item">SKALA</div>
+      <div class="mitra-item">Pemprov NTT</div>
+      <div class="mitra-item">Kemkominfo</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="brand-name">NGADHU<span>.</span></div>
+        <div class="brand-full">
+          <strong>Ngada Gerbang Akses Data Handal dan Utama</strong><br>
+          Portal Satu Data resmi Pemerintah Kabupaten Ngada, Provinsi Nusa Tenggara Timur.
+        </div>
+        <div class="address">
+          Jl. Soekarno-Hatta, Bajawa<br>
+          Kabupaten Ngada, NTT 86415<br>
+          📞 (0384) 21xxx<br>
+          ✉ data@ngadakab.go.id
+        </div>
+        <div class="footer-stats" style="margin-top:1.5rem;">
+          <div class="footer-stat-row"><span>Hari ini</span><span>—</span></div>
+          <div class="footer-stat-row"><span>Bulan ini</span><span>—</span></div>
+          <div class="footer-stat-row"><span>Total Pengunjung</span><span>—</span></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="footer-col-title">Navigasi</div>
+        <ul class="footer-links">
+          <li><a href="#">Beranda</a></li>
+          <li><a href="#">Dataset</a></li>
+          <li><a href="#">Urusan</a></li>
+          <li><a href="#">Organisasi</a></li>
+          <li><a href="#">Analitik</a></li>
+          <li><a href="#">Profil Daerah</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="footer-col-title">Publikasi</div>
+        <ul class="footer-links">
+          <li><a href="#">Berita</a></li>
+          <li><a href="#">Metadata</a></li>
+          <li><a href="#">Produk Hukum</a></li>
+          <li><a href="#">SK Tim</a></li>
+          <li><a href="#">Kajian & Riset</a></li>
+          <li><a href="#">Galeri Data</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="footer-col-title">Bantuan</div>
+        <ul class="footer-links">
+          <li><a href="#">Cara Menggunakan</a></li>
+          <li><a href="#">API Dokumentasi</a></li>
+          <li><a href="#">Hubungi Kami</a></li>
+          <li><a href="#">Kebijakan Privasi</a></li>
+          <li><a href="#">Syarat & Ketentuan</a></li>
+          <li><a href="#">Masuk / Daftar</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© 2025 NGADHU — Pemerintah Kabupaten Ngada, NTT. Hak Cipta Dilindungi.</span>
+      <span>
+        <a href="#">Kebijakan Privasi</a> · <a href="#">Syarat Penggunaan</a> · <a href="#">Aksesibilitas</a>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Navbar scroll effect
+  window.addEventListener('scroll', () => {
+    const navbar = document.getElementById('navbar');
+    if (window.scrollY > 50) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
+  });
+
+  // Counter animation
+  function animateCounter(el, target, suffix = '') {
+    let start = 0;
+    const duration = 2000;
+    const step = target / (duration / 16);
+    const timer = setInterval(() => {
+      start += step;
+      if (start >= target) {
+        start = target;
+        clearInterval(timer);
+      }
+      el.textContent = Math.floor(start) + suffix;
+    }, 16);
+  }
+
+  // Trigger counters when visible
+  const counterObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        animateCounter(document.getElementById('counter1'), 247, '');
+        animateCounter(document.getElementById('counter2'), 28, '');
+        counterObserver.disconnect();
+      }
+    });
+  });
+
+  const statsBar = document.querySelector('.stats-bar');
+  if (statsBar) counterObserver.observe(statsBar);
+
+  // Fade up animation
+  const fadeObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-up').forEach(el => fadeObserver.observe(el));
+
+  // Filter tabs
+  document.querySelectorAll('.filter-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+
+  // Mobile menu
+  function toggleMenu() {
+    const menu = document.querySelector('.nav-menu');
+    if (menu.style.display === 'flex') {
+      menu.style.display = 'none';
+    } else {
+      menu.style.display = 'flex';
+      menu.style.flexDirection = 'column';
+      menu.style.position = 'absolute';
+      menu.style.top = '70px';
+      menu.style.left = '0';
+      menu.style.right = '0';
+      menu.style.background = 'rgba(13,17,23,0.98)';
+      menu.style.padding = '1rem';
+      menu.style.borderBottom = '1px solid rgba(192,57,43,0.2)';
+    }
+  }
+</script>
+
+<script src="ngadhu-anim.js"></script>
+<script>
+(function(){
+  /* ─── Stagger grid cards on scroll ─── */
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        var cards = e.target.querySelectorAll('.dataset-card,.stat-card,.urusan-card,.fade-up,.section-separator');
+        cards.forEach(function(c,i){
+          setTimeout(function(){c.classList.add('visible');},i*80);
+        });
+        io.unobserve(e.target);
+      }
+    });
+  },{threshold:.08});
+
+  document.querySelectorAll('.datasets-grid,.stats-grid,.urusan-grid,.section-header').forEach(function(g){io.observe(g);});
+
+  /* ─── Fade-up standalone elements ─── */
+  var io2 = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){e.target.classList.add('visible');io2.unobserve(e.target);}
+    });
+  },{threshold:.15});
+  document.querySelectorAll('.fade-up').forEach(function(el){io2.observe(el);});
+
+  /* ─── Counter animation for stat card values ─── */
+  var cio = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(!e.isIntersecting) return;
+      var el = e.target;
+      var raw = el.dataset.val || el.textContent;
+      var num = parseFloat(raw.replace(/[^0-9.]/g,''));
+      var suffix = raw.replace(/[0-9.,]/g,'');
+      if(isNaN(num)){return;}
+      var dec = (String(num).split('.')[1]||'').length;
+      var dur=1600,start=null;
+      (function tick(ts){
+        if(!start)start=ts;
+        var prog=Math.min((ts-start)/dur,1);
+        var ease=1-Math.pow(1-prog,3);
+        var val=num*ease;
+        el.textContent=(dec?val.toFixed(dec):Math.floor(val).toLocaleString('id'))+suffix;
+        if(prog<1)requestAnimationFrame(tick);
+      })(performance.now());
+      cio.unobserve(el);
+    });
+  },{threshold:.6});
+
+  document.querySelectorAll('.stat-card-value').forEach(function(el){
+    el.dataset.val = el.textContent;
+    cio.observe(el);
+  });
+
+  /* ─── Ripple on primary buttons ─── */
+  document.querySelectorAll('.btn-primary,.hero-actions a').forEach(function(btn){
+    btn.addEventListener('click',function(e){
+      var r=btn.getBoundingClientRect(),d=Math.max(btn.clientWidth,btn.clientHeight);
+      var sp=document.createElement('span');
+      sp.style.cssText='position:absolute;border-radius:50%;background:rgba(255,255,255,.25);width:'+d+'px;height:'+d+'px;left:'+(e.clientX-r.left-d/2)+'px;top:'+(e.clientY-r.top-d/2)+'px;transform:scale(0);animation:rp .55s ease-out;pointer-events:none';
+      btn.appendChild(sp);
+      setTimeout(function(){sp.remove();},600);
+    });
+  });
+  var rst=document.createElement('style');
+  rst.textContent='@keyframes rp{to{transform:scale(4);opacity:0}}';
+  document.head.appendChild(rst);
+
+  /* ─── Navbar hover active indicator ─── */
+  document.querySelectorAll('.nav-links a').forEach(function(a){
+    a.style.position='relative';
+  });
+})();
+</script>
+
+</body>
+</html>

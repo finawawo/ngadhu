@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Masuk — NGADHU Portal Data Ngada</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #C0392B; --red-l: #E74C3C;
+    --gold: #D4A843;
+    --dark: #0D1117; --dark2: #161B22; --dark3: #21262D;
+    --gray: #8B949E;
+    --font: 'DM Sans', sans-serif;
+    --display: 'Playfair Display', serif;
+    --mono: 'DM Mono', monospace;
+  }
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: var(--font);
+    background: var(--dark);
+    color: white;
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* LEFT PANEL */
+  .left-panel {
+    flex: 1;
+    background:
+      radial-gradient(ellipse at 30% 40%, rgba(192,57,43,0.2) 0%, transparent 55%),
+      radial-gradient(ellipse at 70% 70%, rgba(212,168,67,0.12) 0%, transparent 45%),
+      var(--dark2);
+    display: flex; flex-direction: column;
+    justify-content: space-between;
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .left-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(192,57,43,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(192,57,43,0.06) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+
+  .left-content { position: relative; z-index: 1; }
+
+  .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 4rem; }
+  .brand-logo {
+    width: 42px; height: 42px;
+    background: linear-gradient(135deg, var(--red), var(--gold));
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--display);
+    font-weight: 900; font-size: 1.2rem;
+  }
+  .brand-name { font-family: var(--display); font-size: 1.4rem; font-weight: 700; }
+  .brand-name span { color: var(--gold); }
+
+  .hero-text { margin-bottom: 3rem; }
+  .hero-text .tagline {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--red-l);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .hero-text .tagline::before {
+    content: '';
+    width: 20px; height: 1px;
+    background: var(--red-l);
+  }
+
+  .hero-text h1 {
+    font-family: var(--display);
+    font-size: clamp(2.2rem, 3.5vw, 3rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+
+  .hero-text h1 span {
+    background: linear-gradient(135deg, var(--red-l), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-text p {
+    font-size: 0.9rem;
+    color: var(--gray);
+    line-height: 1.7;
+    max-width: 380px;
+  }
+
+  .features {
+    display: flex; flex-direction: column; gap: 0.8rem;
+    margin-bottom: 2rem;
+  }
+
+  .feature-item {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 0.83rem;
+    color: var(--gray);
+  }
+
+  .feature-icon {
+    width: 28px; height: 28px;
+    background: rgba(192,57,43,0.12);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 0.9rem;
+  }
+
+  .stats-mini {
+    display: flex; gap: 2rem;
+    position: relative; z-index: 1;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255,255,255,0.07);
+  }
+
+  .stat-mini-item .num {
+    font-family: var(--display);
+    font-size: 1.6rem;
+    font-weight: 700;
+    display: block;
+  }
+
+  .stat-mini-item .lbl { font-size: 0.73rem; color: var(--gray); }
+
+  /* RIGHT PANEL (login form) */
+  .right-panel {
+    width: 480px;
+    flex-shrink: 0;
+    background: var(--dark);
+    display: flex; align-items: center; justify-content: center;
+    padding: 2rem;
+    border-left: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .login-box {
+    width: 100%;
+    max-width: 380px;
+  }
+
+  .login-header { margin-bottom: 2rem; }
+  .login-header h2 { font-family: var(--display); font-size: 1.8rem; font-weight: 700; margin-bottom: 0.3rem; }
+  .login-header p { font-size: 0.85rem; color: var(--gray); }
+
+  .form-group { margin-bottom: 1.2rem; }
+  .form-label { font-size: 0.78rem; font-weight: 600; color: var(--gray); letter-spacing: 0.04em; margin-bottom: 0.5rem; display: block; }
+
+  .form-input {
+    width: 100%;
+    background: var(--dark3);
+    border: 1px solid rgba(255,255,255,0.09);
+    color: white;
+    padding: 0.75rem 1rem;
+    border-radius: 9px;
+    font-family: var(--font);
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .form-input:focus {
+    border-color: rgba(192,57,43,0.6);
+    box-shadow: 0 0 0 3px rgba(192,57,43,0.1);
+  }
+
+  .form-input::placeholder { color: rgba(139,148,158,0.6); }
+
+  .password-wrap { position: relative; }
+  .toggle-pw {
+    position: absolute; right: 12px; top: 50%;
+    transform: translateY(-50%);
+    background: none; border: none; cursor: pointer;
+    color: var(--gray); font-size: 0.8rem;
+    font-family: var(--font);
+  }
+
+  .form-options {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 1.5rem;
+    font-size: 0.8rem;
+  }
+
+  .checkbox-wrap { display: flex; align-items: center; gap: 7px; cursor: pointer; color: var(--gray); }
+  .checkbox-wrap input { accent-color: var(--red); }
+
+  .forgot-link { color: var(--red-l); text-decoration: none; font-size: 0.8rem; }
+  .forgot-link:hover { text-decoration: underline; }
+
+  .btn-submit {
+    width: 100%;
+    background: linear-gradient(135deg, var(--red), #a93226);
+    color: white;
+    border: none;
+    padding: 0.85rem;
+    border-radius: 9px;
+    font-family: var(--font);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 20px rgba(192,57,43,0.3);
+    margin-bottom: 1.2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 25px rgba(192,57,43,0.4); }
+  .btn-submit:active { transform: translateY(0); }
+
+  .btn-submit.loading::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.2);
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .divider-text {
+    display: flex; align-items: center; gap: 1rem;
+    font-size: 0.75rem; color: var(--gray);
+    margin-bottom: 1.2rem;
+  }
+
+  .divider-text::before, .divider-text::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255,255,255,0.07);
+  }
+
+  .btn-portal {
+    width: 100%;
+    background: transparent;
+    color: var(--gray);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 0.75rem;
+    border-radius: 9px;
+    font-family: var(--font);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+
+  .btn-portal:hover { color: white; border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.04); }
+
+  .role-info {
+    background: var(--dark3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .role-info p { font-size: 0.75rem; color: var(--gray); margin-bottom: 0.7rem; }
+
+  .role-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .role-tag {
+    padding: 3px 9px;
+    border-radius: 100px;
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+
+  .rt-admin { background: rgba(212,168,67,0.15); color: var(--gold); }
+  .rt-opd { background: rgba(88,166,255,0.12); color: #58a6ff; }
+  .rt-publik { background: rgba(63,185,80,0.12); color: #3fb950; }
+
+  /* Error state */
+  .error-msg {
+    background: rgba(192,57,43,0.1);
+    border: 1px solid rgba(192,57,43,0.3);
+    color: var(--red-l);
+    font-size: 0.8rem;
+    padding: 0.6rem 0.9rem;
+    border-radius: 7px;
+    margin-bottom: 1rem;
+    display: none;
+  }
+
+  @media (max-width: 900px) {
+    .left-panel { display: none; }
+    .right-panel { width: 100%; border: none; }
+  }
+
+  /* LOGIN ANIMATIONS */
+  .login-left  { animation: slide-in-left .7s cubic-bezier(.22,1,.36,1) both; }
+  .login-right { animation: slide-in-right .7s cubic-bezier(.22,1,.36,1) both .15s; }
+  @keyframes slide-in-left  { from{opacity:0;transform:translateX(-30px)} to{opacity:1;transform:none} }
+  @keyframes slide-in-right { from{opacity:0;transform:translateX(30px)}  to{opacity:1;transform:none} }
+
+  .login-logo { animation: logo-drop .6s cubic-bezier(.34,1.56,.64,1) both .3s; }
+  @keyframes logo-drop { from{opacity:0;transform:scale(.6) rotate(-10deg)} to{opacity:1;transform:none} }
+
+  .form-group { animation: form-item-in .45s ease both; }
+  .form-group:nth-child(1){animation-delay:.35s}
+  .form-group:nth-child(2){animation-delay:.45s}
+  .form-group:nth-child(3){animation-delay:.55s}
+  @keyframes form-item-in { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:none} }
+
+  .btn-login-submit { transition: transform .15s, box-shadow .2s, background .2s; position:relative; overflow:hidden; }
+  .btn-login-submit:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(192,57,43,.4); }
+  .btn-login-submit:active { transform:scale(.97); }
+
+  .login-input { transition: border-color .2s, box-shadow .2s; }
+  .login-input:focus { box-shadow:0 0 0 3px rgba(192,57,43,.15); }
+
+  .role-tags .role-tag { opacity:0; transform:scale(.8); animation: tag-pop .4s cubic-bezier(.34,1.56,.64,1) both; }
+  .role-tags .role-tag:nth-child(1){animation-delay:.7s}
+  .role-tags .role-tag:nth-child(2){animation-delay:.8s}
+  .role-tags .role-tag:nth-child(3){animation-delay:.9s}
+  .role-tags .role-tag:nth-child(4){animation-delay:1s}
+  @keyframes tag-pop { to{opacity:1;transform:scale(1)} }
+
+  /* Floating orbs in left panel */
+  .left-orb-1 { animation: orb1 6s ease-in-out infinite; }
+  .left-orb-2 { animation: orb2 8s ease-in-out infinite .5s; }
+  @keyframes orb1 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(15px,-20px) scale(1.05)} }
+  @keyframes orb2 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-10px,15px) scale(.95)} }
+
+  /* Input focus label lift */
+  .input-wrap { position:relative; }
+
+  /* Left panel stats stagger */
+  .left-stats .stat-item { opacity:0; transform:translateX(-20px); animation: stat-slide .4s ease both; }
+  .left-stats .stat-item:nth-child(1){animation-delay:.8s}
+  .left-stats .stat-item:nth-child(2){animation-delay:.9s}
+  .left-stats .stat-item:nth-child(3){animation-delay:1s}
+  @keyframes stat-slide { to{opacity:1;transform:none} }
+
+</style>
+</head>
+<body>
+
+<!-- LEFT PANEL -->
+<div class="left-panel">
+  <div class="left-grid"></div>
+  <div class="left-content">
+    <div class="brand">
+      <div class="brand-logo">N</div>
+      <div class="brand-name">NGADHU<span>.</span></div>
+    </div>
+
+    <div class="hero-text">
+      <div class="tagline">Portal Satu Data Ngada</div>
+      <h1>Gerbang Data<br><span>Handal & Utama</span><br>Kabupaten Ngada</h1>
+      <p>Platform terintegrasi untuk pengelolaan dan akses data pemerintahan Kabupaten Ngada yang transparan, akurat, dan terpercaya.</p>
+    </div>
+
+    <div class="features">
+      <div class="feature-item">
+        <div class="feature-icon">🗄️</div>
+        247+ dataset aktif dari 28 OPD
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">📊</div>
+        Visualisasi data interaktif & analitik
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🔒</div>
+        Sistem multiuser dengan kontrol akses peran
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🗺️</div>
+        Peta SPM per kecamatan secara real-time
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-mini">
+    <div class="stat-mini-item">
+      <span class="num">247</span>
+      <span class="lbl">Dataset</span>
+    </div>
+    <div class="stat-mini-item">
+      <span class="num">28</span>
+      <span class="lbl">OPD</span>
+    </div>
+    <div class="stat-mini-item">
+      <span class="num">100%</span>
+      <span class="lbl">Terbuka</span>
+    </div>
+  </div>
+</div>
+
+<!-- RIGHT PANEL -->
+<div class="right-panel">
+  <div class="login-box">
+    <div class="login-header">
+      <h2>Selamat Datang</h2>
+      <p>Masuk ke Portal NGADHU untuk mengelola data daerah</p>
+    </div>
+
+    <div class="error-msg" id="errorMsg">
+      ⚠️ Email atau kata sandi tidak valid. Silakan coba lagi.
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input type="email" class="form-input" id="emailInput" placeholder="nama@ngadakab.go.id" autocomplete="email">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Kata Sandi</label>
+      <div class="password-wrap">
+        <input type="password" class="form-input" id="pwInput" placeholder="••••••••••" autocomplete="current-password">
+        <button class="toggle-pw" onclick="togglePw()">Lihat</button>
+      </div>
+    </div>
+
+    <div class="form-options">
+      <label class="checkbox-wrap">
+        <input type="checkbox" id="rememberMe">
+        Ingat saya
+      </label>
+      <a href="#" class="forgot-link">Lupa kata sandi?</a>
+    </div>
+
+    <button class="btn-submit" onclick="handleLogin()" id="loginBtn">
+      Masuk ke Dashboard
+    </button>
+
+    <div class="divider-text">atau</div>
+
+    <a href="index.html" class="btn-portal">
+      🌐 Kembali ke Portal Publik
+    </a>
+
+    <div class="role-info">
+      <p>Akses portal berdasarkan peran:</p>
+      <div class="role-tags">
+        <span class="role-tag rt-admin">🛡️ Super Admin</span>
+        <span class="role-tag rt-opd">✏️ Operator OPD</span>
+        <span class="role-tag rt-admin" style="background:rgba(192,57,43,0.12);color:var(--red-l)">⚙️ Admin OPD</span>
+        <span class="role-tag rt-publik">👁️ Publik</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function togglePw() {
+    const input = document.getElementById('pwInput');
+    const btn = document.querySelector('.toggle-pw');
+    if (input.type === 'password') {
+      input.type = 'text';
+      btn.textContent = 'Sembunyikan';
+    } else {
+      input.type = 'password';
+      btn.textContent = 'Lihat';
+    }
+  }
+
+  function handleLogin() {
+    const email = document.getElementById('emailInput').value;
+    const pw = document.getElementById('pwInput').value;
+    const btn = document.getElementById('loginBtn');
+    const err = document.getElementById('errorMsg');
+
+    if (!email || !pw) {
+      err.style.display = 'block';
+      err.textContent = '⚠️ Email dan kata sandi wajib diisi.';
+      return;
+    }
+
+    btn.textContent = 'Memverifikasi...';
+    btn.style.opacity = '0.7';
+    err.style.display = 'none';
+
+    // Simulate login (in production: API call)
+    setTimeout(() => {
+      if (email.includes('@') && pw.length >= 6) {
+        btn.textContent = '✓ Berhasil, mengalihkan...';
+        btn.style.background = 'linear-gradient(135deg, #3fb950, #28a745)';
+        setTimeout(() => { window.location.href = 'dashboard.html'; }, 800);
+      } else {
+        btn.textContent = 'Masuk ke Dashboard';
+        btn.style.opacity = '1';
+        err.style.display = 'block';
+        err.textContent = '⚠️ Email atau kata sandi tidak valid.';
+      }
+    }, 1200);
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleLogin();
+  });
+</script>
+
+<script src="ngadhu-anim.js"></script>
+<script>
+(function(){
+  /* Ripple on submit button */
+  var btn = document.querySelector('.btn-login-submit, button[type="submit"], .login-btn');
+  if(btn){
+    btn.addEventListener('click',function(e){
+      var r=btn.getBoundingClientRect(),d=Math.max(btn.clientWidth,btn.clientHeight);
+      var sp=document.createElement('span');
+      sp.style.cssText='position:absolute;border-radius:50%;background:rgba(255,255,255,.3);width:'+d+'px;height:'+d+'px;left:'+(e.clientX-r.left-d/2)+'px;top:'+(e.clientY-r.top-d/2)+'px;transform:scale(0);animation:rp .5s ease-out;pointer-events:none';
+      btn.appendChild(sp);setTimeout(function(){sp.remove();},600);
+    });
+  }
+  document.head.insertAdjacentHTML('beforeend','<style>@keyframes rp{to{transform:scale(4);opacity:0}}</style>');
+
+  /* Input shake on error */
+  document.querySelectorAll('.login-input, input[type="email"], input[type="password"], input[type="text"]').forEach(function(inp){
+    inp.addEventListener('invalid',function(){
+      inp.style.animation='none';
+      setTimeout(function(){inp.style.animation='shake .4s ease';},10);
+    });
+  });
+  document.head.insertAdjacentHTML('beforeend','<style>@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}</style>');
+})();
+</script>
+</body>
+</html>

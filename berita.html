@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Berita & Publikasi — NGADHU Kabupaten Ngada</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root{--red:#C0392B;--red-l:#E74C3C;--gold:#D4A843;--dark:#0D1117;--dark2:#161B22;--dark3:#21262D;--gray:#8B949E;--font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;--display:'Playfair Display',serif;}
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:var(--font);background:var(--dark);color:white;}
+  .navbar{position:sticky;top:0;z-index:100;height:62px;background:rgba(13,17,23,0.97);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;}
+  .nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+  .nav-logo{width:34px;height:34px;background:linear-gradient(135deg,var(--red),var(--gold));border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:900;font-size:1rem;}
+  .nav-title{font-family:var(--display);font-size:1.2rem;font-weight:700;color:white;}
+  .nav-title span{color:var(--gold);}
+  .nav-links{display:flex;gap:0.2rem;}
+  .nav-links a{color:var(--gray);text-decoration:none;font-size:0.82rem;padding:0.45rem 0.8rem;border-radius:6px;transition:all 0.2s;}
+  .nav-links a:hover,.nav-links a.active{color:white;}
+  .nav-links a.active{color:var(--red-l);}
+  .btn-login{background:var(--red);color:white;padding:0.4rem 1rem;border-radius:6px;text-decoration:none;font-size:0.82rem;font-weight:600;}
+
+  .page-header{background:linear-gradient(180deg,var(--dark2) 0%,var(--dark) 100%);padding:2.5rem 2rem;border-bottom:1px solid rgba(255,255,255,0.05);}
+  .page-header-inner{max-width:1100px;margin:0 auto;}
+  .breadcrumb{display:flex;gap:6px;font-size:0.75rem;color:var(--gray);margin-bottom:0.8rem;}
+  .breadcrumb a{color:var(--gray);text-decoration:none;} .breadcrumb .current{color:var(--red-l);}
+  .page-header h1{font-family:var(--display);font-size:2rem;font-weight:700;margin-bottom:0.3rem;}
+  .page-header p{color:var(--gray);font-size:0.85rem;}
+
+  .content{max-width:1100px;margin:0 auto;padding:2.5rem 2rem;}
+
+  /* CAT TABS */
+  .cat-tabs{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:2rem;}
+  .cat-tab{padding:0.45rem 1.1rem;border-radius:100px;border:1px solid rgba(255,255,255,0.08);color:var(--gray);background:transparent;font-family:var(--font);font-size:0.8rem;cursor:pointer;transition:all 0.2s;}
+  .cat-tab.active,.cat-tab:hover{background:var(--red);color:white;border-color:var(--red);}
+
+  /* FEATURED */
+  .featured-grid{display:grid;grid-template-columns:1.8fr 1fr;gap:1.5rem;margin-bottom:2.5rem;}
+  .featured-main{background:var(--dark3);border:1px solid rgba(255,255,255,0.06);border-radius:16px;overflow:hidden;text-decoration:none;color:inherit;display:block;transition:all 0.3s;}
+  .featured-main:hover{transform:translateY(-3px);box-shadow:0 15px 40px rgba(0,0,0,0.3);}
+  .featured-img{height:240px;background:linear-gradient(135deg,rgba(192,57,43,0.5),rgba(212,168,67,0.4));display:flex;align-items:center;justify-content:center;font-size:4rem;position:relative;}
+  .featured-img .img-overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(33,38,45,0.95) 0%,transparent 60%);}
+  .featured-body{padding:1.5rem;}
+  .news-cat{font-size:0.7rem;color:var(--red-l);letter-spacing:0.1em;text-transform:uppercase;font-weight:700;margin-bottom:0.5rem;}
+  .news-title{font-family:var(--display);font-size:1.15rem;font-weight:700;line-height:1.35;margin-bottom:0.7rem;}
+  .news-excerpt{font-size:0.82rem;color:var(--gray);line-height:1.6;margin-bottom:1rem;}
+  .news-footer{display:flex;justify-content:space-between;font-size:0.75rem;color:var(--gray);}
+  .news-footer .date{font-family:var(--mono);}
+
+  .featured-side{display:flex;flex-direction:column;gap:1rem;}
+  .side-news{background:var(--dark3);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:1.1rem;text-decoration:none;color:inherit;display:block;transition:all 0.2s;}
+  .side-news:hover{border-color:rgba(192,57,43,0.25);transform:translateX(3px);}
+  .side-news .news-cat{margin-bottom:0.3rem;}
+  .side-news .news-title{font-size:0.88rem;font-weight:600;line-height:1.35;margin-bottom:0.5rem;font-family:var(--font);}
+
+  /* ALL BERITA */
+  .berita-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;}
+  .berita-heading h2{font-family:var(--display);font-size:1.4rem;font-weight:700;}
+
+  .berita-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.2rem;margin-bottom:2rem;}
+  .berita-card{background:var(--dark3);border:1px solid rgba(255,255,255,0.06);border-radius:12px;overflow:hidden;text-decoration:none;color:inherit;display:block;transition:all 0.25s;}
+  .berita-card:hover{border-color:rgba(192,57,43,0.25);transform:translateY(-3px);box-shadow:0 10px 30px rgba(0,0,0,0.2);}
+  .berita-card-img{height:140px;background:linear-gradient(135deg,rgba(192,57,43,0.3),rgba(212,168,67,0.2));display:flex;align-items:center;justify-content:center;font-size:2.5rem;}
+  .berita-card-body{padding:1.1rem;}
+  .berita-card .news-title{font-size:0.88rem;font-family:var(--font);font-weight:600;-webkit-line-clamp:2;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:0.5rem;}
+  .berita-card .news-excerpt{font-size:0.78rem;-webkit-line-clamp:2;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden;}
+  .berita-card-footer{display:flex;justify-content:space-between;font-size:0.72rem;color:var(--gray);margin-top:0.8rem;padding-top:0.8rem;border-top:1px solid rgba(255,255,255,0.05);}
+  .berita-card-footer .date{font-family:var(--mono);}
+  .read-more{color:var(--red-l);}
+
+  @media(max-width:800px){.featured-grid{grid-template-columns:1fr;}.nav-links{display:none;}}
+
+  /* BERITA ANIMATIONS */
+  .page-header h1 { animation:head-in .6s cubic-bezier(.22,1,.36,1) both .05s; }
+  .page-header p  { animation:head-in .5s ease both .15s; opacity:0; }
+  @keyframes head-in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+  .cat-tab { transition:background .2s,color .2s,transform .15s,box-shadow .2s; }
+  .cat-tab.active,.cat-tab:hover { transform:translateY(-1px); }
+  .cat-tab.active { box-shadow:0 4px 14px rgba(192,57,43,.3); }
+
+  .featured-main { opacity:0; transform:translateX(-24px); animation:feat-in .6s cubic-bezier(.22,1,.36,1) both .25s; }
+  @keyframes feat-in{to{opacity:1;transform:none}}
+  .featured-main:hover { transform:translateY(-4px) !important; }
+
+  .side-news { opacity:0; transform:translateX(20px); animation:side-in .45s ease both; }
+  .side-news:nth-child(1){animation-delay:.35s}.side-news:nth-child(2){animation-delay:.45s}.side-news:nth-child(3){animation-delay:.55s}
+  @keyframes side-in{to{opacity:1;transform:none}}
+  .side-news:hover { transform:translateX(5px) !important; }
+
+  .berita-card { opacity:0; transform:translateY(20px); transition:opacity .5s ease,transform .5s cubic-bezier(.22,1,.36,1),border-color .2s,box-shadow .2s; }
+  .berita-card.visible { opacity:1; transform:none; }
+  .berita-card:hover { transform:translateY(-5px) !important; box-shadow:0 10px 30px rgba(192,57,43,.15); }
+
+  .berita-card-img { overflow:hidden; }
+  .berita-card-img span { transition:transform .4s ease; display:block; }
+  .berita-card:hover .berita-card-img span { transform:scale(1.1); }
+
+  /* Load more button */
+  button.load-more { transition:color .2s,border-color .2s,transform .15s; }
+  button.load-more:hover { transform:translateY(-2px); }
+
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="index.html" class="nav-brand"><div class="nav-logo">N</div><span class="nav-title">NGADHU<span></span></span></a>
+  <div class="nav-links">
+    <a href="index.html">Beranda</a><a href="dataset-list.html">Dataset</a><a href="analitik.html">Analitik</a>
+    <a href="profil.html">Profil</a><a href="berita.html" class="active">Berita</a>
+  </div>
+  <a href="login.html" class="btn-login">Masuk</a>
+</nav>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="breadcrumb"><a href="index.html">Beranda</a><span>›</span><span class="current">Berita & Publikasi</span></div>
+    <h1>Berita & Publikasi</h1>
+    <p>Informasi terbaru seputar program, kebijakan, dan pengelolaan data Pemerintah Kabupaten Ngada</p>
+  </div>
+</div>
+
+<div class="content">
+  <div class="cat-tabs">
+    <button class="cat-tab ng-ripple active">Semua</button>
+    <button class="cat-tab">Data & Statistik</button>
+    <button class="cat-tab">Kesehatan</button>
+    <button class="cat-tab">Pendidikan</button>
+    <button class="cat-tab">Ekonomi</button>
+    <button class="cat-tab">Infrastruktur</button>
+    <button class="cat-tab">Pariwisata</button>
+    <button class="cat-tab">Pengumuman</button>
+  </div>
+
+  <!-- FEATURED -->
+  <div class="featured-grid">
+    <a href="#" class="featured-main ng-reveal-left">
+      <div class="featured-img">📊<div class="img-overlay"></div></div>
+      <div class="featured-body">
+        <div class="news-cat">📊 Data & Statistik</div>
+        <div class="news-title">Peluncuran Portal NGADHU: Gerbang Akses Data Handal dan Utama Kabupaten Ngada</div>
+        <div class="news-excerpt">Pemerintah Kabupaten Ngada resmi meluncurkan Portal Satu Data NGADHU sebagai terobosan digitalisasi tata kelola data daerah. Platform ini mengintegrasikan data dari 28 Organisasi Perangkat Daerah (OPD) dalam satu sistem terpadu yang mudah diakses oleh publik.</div>
+        <div class="news-footer">
+          <span class="date">20 Jan 2025</span>
+          <span>🕒 5 min baca</span>
+        </div>
+      </div>
+    </a>
+    <div class="featured-side">
+      <a href="#" class="side-news ng-reveal-right">
+        <div class="news-cat">🏥 Kesehatan</div>
+        <div class="news-title">Prevalensi Stunting Ngada Turun ke 14,2% di 2024, Lampaui Target Nasional</div>
+        <div class="news-footer" style="margin-top:0.5rem"><span class="date">15 Feb 2025</span><span>3 min</span></div>
+      </a>
+      <a href="#" class="side-news ng-reveal-right">
+        <div class="news-cat">💰 Ekonomi</div>
+        <div class="news-title">Pertumbuhan Ekonomi Ngada 2024 Capai 4,2% — Tertinggi dalam 5 Tahun Terakhir</div>
+        <div class="news-footer" style="margin-top:0.5rem"><span class="date">12 Feb 2025</span><span>4 min</span></div>
+      </a>
+      <a href="#" class="side-news ng-reveal-right">
+        <div class="news-cat">☕ Pertanian</div>
+        <div class="news-title">Kopi Arabika Bajawa Raih Penghargaan Kopi Terbaik di Indonesia Coffee Festival 2025</div>
+        <div class="news-footer" style="margin-top:0.5rem"><span class="date">08 Feb 2025</span><span>3 min</span></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ALL BERITA -->
+  <div class="berita-heading">
+    <h2>Semua Berita & Artikel</h2>
+  </div>
+
+  <div class="berita-grid">
+    <a href="#" class="berita-card ng-reveal-up ng-ripple"><div class="berita-card-img">🎓</div><div class="berita-card-body"><div class="news-cat">🎓 Pendidikan</div><div class="news-title">APM SMA Kabupaten Ngada Naik 2,1 Poin — Dinas Pendidikan Targetkan 85% di 2025</div><div class="news-excerpt">Angka Partisipasi Murni jenjang SMA di Kabupaten Ngada mengalami peningkatan signifikan pada tahun 2024.</div><div class="berita-card-footer"><span class="date">05 Feb 2025</span><span class="read-more">Baca →</span></div></div></a>
+    <a href="#" class="berita-card ng-reveal-up ng-ripple"><div class="berita-card-img">🛣️</div><div class="berita-card-body"><div class="news-cat">🏗️ Infrastruktur</div><div class="news-title">Pemkab Ngada Alokasikan Rp 48 Miliar untuk Pemeliharaan Jalan Kabupaten 2025</div><div class="news-excerpt">Pemerintah Kabupaten Ngada berkomitmen meningkatkan kondisi jalan dari 76,3% menjadi 82% pada akhir tahun 2025.</div><div class="berita-card-footer"><span class="date">01 Feb 2025</span><span class="read-more">Baca →</span></div></div></a>
+    <a href="#" class="berita-card ng-reveal-up ng-ripple"><div class="berita-card-img">🏺</div><div class="berita-card-body"><div class="news-cat">🗺️ Pariwisata</div><div class="news-title">Kampung Adat Bena Masuk Nominasi UNESCO World Heritage 2025 — Kebanggaan Ngada</div><div class="news-excerpt">Kampung tradisional megalitik Bena di Kecamatan Inerie kembali mendapat perhatian internasional dari UNESCO.</div><div class="berita-card-footer"><span class="date">28 Jan 2025</span><span class="read-more">Baca →</span></div></div></a>
+    <a href="#" class="berita-card ng-reveal-up ng-ripple"><div class="berita-card-img">💧</div><div class="berita-card-body"><div class="news-cat">🏗️ Infrastruktur</div><div class="news-title">Program Air Bersih 2024 Capai 71,8% Cakupan — 3.400 KK Baru Terhubung</div><div class="news-excerpt">Program penyediaan air minum bersih Kabupaten Ngada terus meluas ke wilayah-wilayah terpencil.</div><div class="berita-card-footer"><span class="date">25 Jan 2025</span><span class="read-more">Baca →</span></div></div></a>
+    <a href="#" class="berita-card ng-reveal-up ng-ripple"><div class="berita-card-img">📋</div><div class="berita-card-body"><div class="news-cat">📊 Data & Statistik</div><div class="news-title">Workshop Pemutakhiran Data Prioritas OPD Ngada 2025 Resmi Dibuka</div><div class="news-excerpt">Dinas Kominfo Ngada membuka workshop pemutakhiran data bagi 28 OPD untuk memastikan kualitas data di portal NGADHU.</div><div class="berita-card-footer"><span class="date">22 Jan 2025</span><span class="read-more">Baca →</span></div></div></a>
+    <a href="#" class="berita-card ng-reveal-up ng-ripple"><div class="berita-card-img">🤝</div><div class="berita-card-body"><div class="news-cat">🤝 Sosial</div><div class="news-title">PKH dan BPNT 2025: 8.420 KPM di Kabupaten Ngada Terima Bantuan Sosial</div><div class="news-excerpt">Data terbaru dari Dinas Sosial menunjukkan distribusi bantuan sosial tepat sasaran berkat verifikasi berbasis DTKS.</div><div class="berita-card-footer"><span class="date">18 Jan 2025</span><span class="read-more">Baca →</span></div></div></a>
+  </div>
+
+  <!-- LOAD MORE -->
+  <div style="text-align:center;">
+    <button style="background:transparent;border:1px solid rgba(255,255,255,0.15);color:var(--gray);padding:0.7rem 2rem;border-radius:8px;font-family:var(--font);font-size:0.85rem;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.color='white';this.style.borderColor='rgba(192,57,43,0.4)'" onmouseout="this.style.color='var(--gray)';this.style.borderColor='rgba(255,255,255,0.15)'">
+      Muat Berita Lebih Banyak
+    </button>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.cat-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+</script>
+
+<script src="ngadhu-anim.js"></script>
+<script>
+(function(){
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        var cards=e.target.querySelectorAll('.berita-card');
+        cards.forEach(function(c,i){setTimeout(function(){c.classList.add('visible');},i*90);});
+        io.unobserve(e.target);
+      }
+    });
+  },{threshold:.07});
+  document.querySelectorAll('.berita-grid').forEach(function(g){io.observe(g);});
+
+  /* Category tab ripple */
+  document.querySelectorAll('.cat-tab').forEach(function(btn){
+    btn.addEventListener('click',function(e){
+      var r=btn.getBoundingClientRect(),d=Math.max(btn.clientWidth,btn.clientHeight);
+      var sp=document.createElement('span');
+      sp.style.cssText='position:absolute;border-radius:50%;background:rgba(255,255,255,.3);width:'+d+'px;height:'+d+'px;left:'+(e.clientX-r.left-d/2)+'px;top:'+(e.clientY-r.top-d/2)+'px;transform:scale(0);animation:rp .5s ease-out;pointer-events:none';
+      btn.style.position='relative';btn.style.overflow='hidden';
+      btn.appendChild(sp);setTimeout(function(){sp.remove();},600);
+    });
+  });
+  document.head.insertAdjacentHTML('beforeend','<style>@keyframes rp{to{transform:scale(4);opacity:0}}</style>');
+})();
+</script>
+</body>
+</html>
